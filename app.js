@@ -1,6 +1,18 @@
 // IVANTA Loafers Website JavaScript
 
-document.addEventListener('DOMContentLoaded', function() {
+
+
+// document.addEventListener('DOMContentLoaded', function() {
+    window.addEventListener('load', function() {
+
+    const header = document.querySelector('.header');
+    const homeSection = document.querySelector('#home');
+
+    if (header && homeSection) {
+        const headerHeight = header.offsetHeight;
+        // We add 40px for extra visual spacing below the header
+        homeSection.style.paddingTop = `${headerHeight + 40}px`;
+    }
     
     // Smooth scrolling for navigation links
     const navLinks = document.querySelectorAll('.nav__link');
@@ -102,7 +114,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Header scroll effect
     let lastScrollTop = 0;
-    const header = document.querySelector('.header');
     
     window.addEventListener('scroll', function() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
