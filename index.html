@@ -106,7 +106,7 @@
                 <!-- Logo -->
                 <div class="logo">
                     <a href="#" onclick="navigate('home')" class="flex flex-col items-center justify-center group inline-block transition-transform duration-300 hover:scale-105">
-                        <img src="./House Of “Indus” (1).jpg" alt="IVANTA Logo" class="h-24 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
+                        <img src="./House Of “Indus” (1).png" alt="IVANTA Logo" class="h-24 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
                     </a>
                 </div>
                 
@@ -402,7 +402,7 @@
             <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
                 <div class="text-center md:text-left">
                     <div class="inline-flex flex-col items-center justify-center group">
-                        <img src="./House Of “Indus” (1).jpg" alt="IVANTA Logo" class="h-32 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
+                        <img src="./House Of “Indus” (1).png" alt="IVANTA Logo" class="h-32 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
                     </div>
                 </div>
                 
@@ -640,8 +640,8 @@
 
         // --- NEW B2B RETAILER TOOLS LOGIC --- //
 
-        // Helper function for fetching image as base64 securely, with optional background removal
-        function getBase64FromUrl(url, makeTransparent = false) {
+        // Helper function for fetching image as base64 securely, with optional background removal/inversion
+        function getBase64FromUrl(url, makeTransparent = false, invertWhite = false) {
             return new Promise((resolve) => {
                 const img = new Image();
                 img.crossOrigin = "Anonymous";
@@ -653,13 +653,19 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0);
                         
-                        if (makeTransparent) {
+                        if (makeTransparent || invertWhite) {
                             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                             const data = imgData.data;
                             for (let i = 0; i < data.length; i += 4) {
                                 // If pixel is light (cream/white background), make it fully transparent
-                                if (data[i] > 230 && data[i+1] > 230 && data[i+2] > 230) {
+                                if (makeTransparent && data[i] > 230 && data[i+1] > 230 && data[i+2] > 230) {
                                     data[i+3] = 0; 
+                                }
+                                // If pixel is dark (black lines) and we need to invert to white
+                                else if (invertWhite && data[i+3] > 0 && data[i] < 100 && data[i+1] < 100 && data[i+2] < 100) {
+                                    data[i] = 255;
+                                    data[i+1] = 255;
+                                    data[i+2] = 255;
                                 }
                             }
                             ctx.putImageData(imgData, 0, 0);
@@ -712,42 +718,47 @@
                 return { name: c.name, imgData: imgData };
             });
 
-            // Added Logo to the concurrent fetch (Requesting transparent background)
+            // Added Logo to the concurrent fetch (Requesting transparent background and inverted white text)
             const [mainImgData, logoData, ...colorImages] = await Promise.all([
                 getBase64FromUrl(mainImgSrc),
-                getBase64FromUrl('./House Of “Indus” (1).jpg', true),
+                getBase64FromUrl('./House Of “Indus” (1).png', true, true),
                 ...colorPromises
             ]);
 
-            // Draw Top Header Bar (Now White for crisp logo printing)
-            doc.setFillColor(252, 252, 252);
-            doc.rect(0, 0, 210, 65, 'F');
-            doc.setDrawColor(205, 169, 94); // brand gold border
-            doc.setLineWidth(0.5);
-            doc.line(0, 65, 210, 65);
+            // Draw Top Header Bar (Now Black)
+            doc.setFillColor(15, 15, 15);
+            doc.rect(0, 0, 210, 48, 'F');
             
-            // Draw IVANTA Logo perfectly clear-cut (Increased Size)
+            // Draw IVANTA Logo
             if (logoData && logoData.dataUrl) {
-                const logoW = 55;
+                const logoW = 35;
                 const ratio = logoData.width / logoData.height;
                 const logoH = logoW / ratio;
-                doc.addImage(logoData.dataUrl, logoData.isPng ? 'PNG' : 'JPEG', 105 - (logoW / 2), 5, logoW, logoH);
+                doc.addImage(logoData.dataUrl, logoData.isPng ? 'PNG' : 'JPEG', 105 - (logoW / 2), 8, logoW, logoH);
             }
+
+            // Gold Subtitle as per image
+            doc.setFontSize(9);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(205, 169, 94); // brand gold
+            doc.text("HOUSE OF INDUS   |   B2B RETAILER CATALOGUE", 105, 40, { align: "center" });
 
             // Product Core Info
             doc.setTextColor(20, 20, 20);
             doc.setFont("helvetica", "bold");
             doc.setFontSize(22);
-            doc.text(currentProduct.title.toUpperCase(), 20, 80);
+            doc.text(currentProduct.title.toUpperCase(), 20, 65);
 
             doc.setFontSize(14);
             doc.setTextColor(100, 100, 100);
-            doc.text(`CATEGORY: ${currentProduct.category.toUpperCase()}`, 20, 90);
+            doc.text(`CATEGORY: ${currentProduct.category.toUpperCase()}`, 20, 75);
             
             doc.setTextColor(181, 147, 78); // darker gold for print contrast
-            doc.text(`MSRP: ${currentProduct.price}`, 20, 100);
+            // jsPDF default fonts don't support the ₹ symbol, so we convert it to Rs. to prevent layout issues
+            const pdfPrice = currentProduct.price.replace('₹', 'Rs. ');
+            doc.text(`MSRP: ${pdfPrice}`, 20, 85);
 
-            let yPos = 115;
+            let yPos = 100;
             
             // Draw Main Image
             if (mainImgData) {
@@ -937,7 +948,7 @@
             const imgSrc = document.getElementById('pd-main-img').src;
             const [img, logoImg] = await Promise.all([
                 loadImgSafe(imgSrc),
-                loadImgSafe('./House Of “Indus” (1).jpg')
+                loadImgSafe('./House Of “Indus” (1).png')
             ]);
 
             // Fill dark background
@@ -1033,7 +1044,7 @@
                     for(let i = 0; i < data.length; i += 4) {
                         if(data[i] > 230 && data[i+1] > 230 && data[i+2] > 230) {
                             data[i+3] = 0; // make background transparent
-                        } else {
+                        } else if(data[i] < 100 && data[i+1] < 100 && data[i+2] < 100 && data[i+3] > 0) {
                             data[i] = 255; data[i+1] = 255; data[i+2] = 255; // turn logo white
                         }
                     }
