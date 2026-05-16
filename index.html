@@ -163,7 +163,7 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="relative aspect-[4/3] img-zoom-hover group cursor-pointer border border-brand-border" onclick="navigate('shop')">
-                            <img src="https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80" alt="Loafers" class="w-full h-full object-cover opacity-70 group-hover:opacity-100">
+                            <img src="IV-202 TAN.jpg" alt="Loafers" class="w-full h-full object-cover opacity-70 group-hover:opacity-100">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-10">
                                 <div>
                                     <h3 class="font-serif text-3xl text-white mb-2">Signature Loafers</h3>
@@ -172,7 +172,7 @@
                             </div>
                         </div>
                         <div class="relative aspect-[4/3] img-zoom-hover group cursor-pointer border border-brand-border" onclick="navigate('shop')">
-                            <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80" alt="Heel Boots" class="w-full h-full object-cover opacity-70 group-hover:opacity-100">
+                            <img src="boot2.jpeg" alt="Heel Boots" class="w-full h-full object-cover opacity-70 group-hover:opacity-100">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-10">
                                 <div>
                                     <h3 class="font-serif text-3xl text-white mb-2">Architectural Heel Boots</h3>
@@ -640,7 +640,7 @@
 
         // --- NEW B2B RETAILER TOOLS LOGIC --- //
 
-        // Helper function for fetching image as base64 securely, with optional background removal/inversion
+        // Helper function for fetching image as base64 securely, with optional smooth background removal/inversion
         function getBase64FromUrl(url, makeTransparent = false, invertWhite = false) {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -657,16 +657,23 @@
                             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                             const data = imgData.data;
                             for (let i = 0; i < data.length; i += 4) {
-                                // If pixel is light (cream/white background), make it fully transparent
-                                if (makeTransparent && data[i] > 230 && data[i+1] > 230 && data[i+2] > 230) {
-                                    data[i+3] = 0; 
-                                }
-                                // If pixel is dark (black lines) and we need to invert to white
-                                else if (invertWhite && data[i+3] > 0 && data[i] < 100 && data[i+1] < 100 && data[i+2] < 100) {
+                                // Calculate luminance to preserve anti-aliasing edges smoothly
+                                const luminance = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+                                let alpha = 255 - luminance;
+                                alpha = Math.min(255, alpha * 1.5); // Boost contrast slightly for crisp edges
+
+                                if (invertWhite) {
+                                    // Make logo pure white, with transparent background
                                     data[i] = 255;
                                     data[i+1] = 255;
                                     data[i+2] = 255;
+                                } else if (makeTransparent) {
+                                    // Make logo pure black, with transparent background
+                                    data[i] = 0;
+                                    data[i+1] = 0;
+                                    data[i+2] = 0;
                                 }
+                                data[i+3] = alpha;
                             }
                             ctx.putImageData(imgData, 0, 0);
                             resolve({ dataUrl: canvas.toDataURL('image/png'), width: img.naturalWidth, height: img.naturalHeight, isPng: true });
@@ -910,9 +917,10 @@
             showToast(`Generating specification image for ${currentProduct.title}...`);
             
             // Create an off-screen canvas to draw our custom catalogue image
+            // We use a high resolution (1.5x scale) to make the text and image very clear and large
             const canvas = document.createElement('canvas');
-            canvas.width = 1080;
-            canvas.height = 1350; // 4:5 ratio for excellent mobile sharing
+            canvas.width = 1620;
+            canvas.height = 2025; // 4:5 ratio, perfect for mobile but much higher resolution
             const ctx = canvas.getContext('2d');
             
             // Helper function to load image safely and handle fallbacks
@@ -955,12 +963,12 @@
             ctx.fillStyle = '#0a0a0a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Image boundaries and border radius
-            const imgW = 840;
-            const imgH = 600;
-            const imgX = (canvas.width - imgW) / 2;
-            const imgY = 160;
-            const radius = 20;
+            // High Resolution Image Boundaries - Making the product image much BIGGER
+            const imgW = 1320;
+            const imgH = 980;
+            const imgX = (canvas.width - imgW) / 2; // 150 margin on sides
+            const imgY = 340; // Pushed down to make room for huge logo
+            const radius = 40;
 
             if (isSafeToDraw(img)) {
                 // Draw clipping path for rounded image
@@ -1000,7 +1008,7 @@
                 ctx.quadraticCurveTo(imgX, imgY, imgX + radius, imgY);
                 ctx.closePath();
                 ctx.strokeStyle = '#cda95e';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 3; // Thicker line for higher resolution
                 ctx.stroke();
             } else {
                 // Secure Placeholder Block (prevents taint and ensures text loads)
@@ -1018,90 +1026,64 @@
                 ctx.closePath();
                 ctx.fill();
                 ctx.strokeStyle = '#cda95e';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 3;
                 ctx.stroke();
                 
                 ctx.fillStyle = '#52525b';
-                ctx.font = '300 22px "Inter", sans-serif';
+                ctx.font = '300 33px "Inter", sans-serif'; // Scaled up font
                 ctx.textAlign = 'center';
                 ctx.fillText('Image hidden due to browser security restrictions', imgX + (imgW/2), imgY + (imgH/2));
                 ctx.textAlign = 'left';
             }
 
-            // Draw Top Brand Badge (Increased Size)
+            // Draw Top Brand Badge (Huge and Native Clarity)
             if (logoImg) {
-                if (isSafeToDraw(logoImg)) {
-                    ctx.save();
-                    const tempC = document.createElement('canvas');
-                    tempC.width = logoImg.width;
-                    tempC.height = logoImg.height;
-                    const tctx = tempC.getContext('2d');
-                    tctx.drawImage(logoImg, 0, 0);
-                    
-                    // Process pixels to remove cream background and turn black logo lines pure white
-                    const imgData = tctx.getImageData(0, 0, tempC.width, tempC.height);
-                    const data = imgData.data;
-                    for(let i = 0; i < data.length; i += 4) {
-                        if(data[i] > 230 && data[i+1] > 230 && data[i+2] > 230) {
-                            data[i+3] = 0; // make background transparent
-                        } else if(data[i] < 100 && data[i+1] < 100 && data[i+2] < 100 && data[i+3] > 0) {
-                            data[i] = 255; data[i+1] = 255; data[i+2] = 255; // turn logo white
-                        }
-                    }
-                    tctx.putImageData(imgData, 0, 0);
-
-                    const logoH = 120; // Increased properly scaled height
-                    const logoRatio = logoImg.width / logoImg.height;
-                    const logoW = logoH * logoRatio;
-                    
-                    ctx.drawImage(tempC, imgX, 20, logoW, logoH); // Adjusted Y position
-                    ctx.restore();
-                } else {
-                    // Fallback to drawing the image as-is if canvas is tainted (CORS restriction)
-                    ctx.save();
-                    ctx.globalCompositeOperation = 'screen';
-                    ctx.filter = 'invert(1) contrast(1.2)';
-                    const logoH = 120; // Increased
-                    const logoRatio = logoImg.width / logoImg.height;
-                    const logoW = logoH * logoRatio;
-                    ctx.drawImage(logoImg, imgX, 20, logoW, logoH); // Adjusted Y position
-                    ctx.restore();
-                }
+                ctx.save();
+                const logoH = 260; // Much bigger size
+                const logoRatio = logoImg.width / logoImg.height;
+                const logoW = logoH * logoRatio;
+                const logoX = (canvas.width - logoW) / 2; // Center horizontally
+                
+                // Use native canvas filters for crystal clear anti-aliasing
+                // invert(1) makes the black logo white, brightness boosts the visual pop
+                ctx.filter = 'invert(1) brightness(2)'; 
+                ctx.drawImage(logoImg, logoX, 40, logoW, logoH); 
+                ctx.restore();
             }
             
-            // --- Text Overlays ---
+            // --- High Resolution Text Overlays ---
             // Product Title
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 56px "Playfair Display", serif';
-            ctx.fillText(currentProduct.title, imgX, canvas.height - 430);
+            ctx.font = 'bold 84px "Playfair Display", serif';
+            ctx.fillText(currentProduct.title, imgX, 1400);
             
             ctx.fillStyle = '#cda95e'; 
-            ctx.font = '500 28px "Inter", sans-serif';
-            ctx.fillText(`${currentProduct.category.toUpperCase()}  |  ${currentProduct.price}`, imgX, canvas.height - 380);
+            ctx.font = '500 42px "Inter", sans-serif';
+            ctx.fillText(`${currentProduct.category.toUpperCase()}  |  ${currentProduct.price}`, imgX, 1470);
             
             ctx.fillStyle = 'rgba(24, 24, 27, 0.9)'; 
             ctx.strokeStyle = '#cda95e'; 
-            ctx.lineWidth = 1;
-            ctx.fillRect(imgX, canvas.height - 330, imgW, 110);
-            ctx.strokeRect(imgX, canvas.height - 330, imgW, 110);
+            ctx.lineWidth = 1.5;
+            ctx.fillRect(imgX, 1530, imgW, 160);
+            ctx.strokeRect(imgX, 1530, imgW, 160);
             
             ctx.fillStyle = '#a1a1aa'; 
-            ctx.font = '400 22px "Inter", sans-serif';
-            ctx.fillText('SELECTED COLOR', imgX + 40, canvas.height - 285);
-            ctx.fillText('SELECTED SIZE', imgX + 440, canvas.height - 285);
+            ctx.font = '400 32px "Inter", sans-serif';
+            ctx.fillText('SELECTED COLOR', imgX + 60, 1595);
+            ctx.fillText('SELECTED SIZE', imgX + 660, 1595);
             
             ctx.fillStyle = '#ffffff';
-            ctx.font = '700 26px "Inter", sans-serif';
-            ctx.fillText(selectedColor.toUpperCase(), imgX + 40, canvas.height - 250);
-            ctx.fillText(selectedSize, imgX + 440, canvas.height - 250);
+            ctx.font = '700 38px "Inter", sans-serif';
+            ctx.fillText(selectedColor.toUpperCase(), imgX + 60, 1650);
+            ctx.fillText(selectedSize, imgX + 660, 1650);
             
             ctx.fillStyle = '#d4d4d8'; 
-            ctx.font = '300 24px "Inter", sans-serif';
-            wrapText(ctx, currentProduct.description, imgX, canvas.height - 160, imgW, 36);
+            ctx.font = '300 36px "Inter", sans-serif';
+            wrapText(ctx, currentProduct.description, imgX, 1780, imgW, 54);
             
             ctx.fillStyle = '#52525b'; 
-            ctx.font = '500 18px "Inter", sans-serif';
-            ctx.fillText('HOUSE OF INDUS B2B RETAILER SPECIFICATION', imgX, canvas.height - 50);
+            ctx.font = '500 26px "Inter", sans-serif';
+            ctx.fillText('HOUSE OF INDUS B2B RETAILER SPECIFICATION', imgX, 1970);
 
             // Use toBlob for stable mobile sharing and downloading
             try {
