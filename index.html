@@ -726,6 +726,12 @@
                 const drawHeight = mainImgData.height * ratio;
                 const xOffset = 20 + ((maxWidth - drawWidth) / 2);
                 const yOffset = yPos + ((maxHeight - drawHeight) / 2);
+                
+                // Draw Gold Border around Main Image
+                doc.setDrawColor(205, 169, 94);
+                doc.setLineWidth(0.5);
+                doc.rect(xOffset - 1, yOffset - 1, drawWidth + 2, drawHeight + 2);
+                
                 doc.addImage(mainImgData.dataUrl, 'JPEG', xOffset, yOffset, drawWidth, drawHeight);
             } else {
                 doc.setFontSize(10);
@@ -761,18 +767,29 @@
             for (const c of colorImages) {
                 let textOffset = sideX;
                 if (c.imgData && c.imgData.dataUrl) {
-                    const tw = 14;
-                    const th = 14;
+                    const tw = 26; // Increased thumbnail width
+                    const th = 26; // Increased thumbnail height
                     const r = Math.min(tw / c.imgData.width, th / c.imgData.height);
                     const dw = c.imgData.width * r;
                     const dh = c.imgData.height * r;
                     const dx = sideX + (tw - dw) / 2;
-                    const dy = sideY + (th - dh) / 2;
+                    const dy = sideY;
+                    
+                    // Draw Gold Border around Thumbnail
+                    doc.setDrawColor(205, 169, 94);
+                    doc.setLineWidth(0.3);
+                    doc.rect(dx - 0.5, dy - 0.5, dw + 1, dh + 1);
+
                     doc.addImage(c.imgData.dataUrl, 'JPEG', dx, dy, dw, dh);
-                    textOffset = sideX + 18; // Shift text so it's beside the thumbnail
+                    textOffset = sideX + tw + 6; // Shift text beside the larger thumbnail
+                    
+                    // Center text vertically with the larger thumbnail
+                    doc.text(`• ${c.name}`, textOffset, sideY + (th / 2) + 1.5);
+                    sideY += th + 6; // Add spacing based on new height
+                } else {
+                    doc.text(`• ${c.name}`, textOffset, sideY + 5);
+                    sideY += 12;
                 }
-                doc.text(`• ${c.name}`, textOffset, sideY + 9);
-                sideY += 16;
             }
             
             sideY += 6;
