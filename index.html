@@ -667,10 +667,31 @@
                         } else {
                             resolve({ dataUrl: canvas.toDataURL('image/jpeg', 0.8), width: img.naturalWidth, height: img.naturalHeight, isPng: false });
                         }
-                    } catch(e) { resolve(null); }
+                    } catch(e) { 
+                        // If it fails (e.g. taint), fallback to resolving with null
+                        resolve(null); 
+                    }
                 };
-                img.onerror = () => resolve(null);
-                img.src = url + (url.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+                img.onerror = () => {
+                    // Try without crossOrigin just in case it works as a standard image
+                    const fbImg = new Image();
+                    fbImg.onload = () => {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = fbImg.naturalWidth;
+                            canvas.height = fbImg.naturalHeight;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(fbImg, 0, 0);
+                            resolve({ dataUrl: canvas.toDataURL('image/jpeg', 0.8), width: fbImg.naturalWidth, height: fbImg.naturalHeight, isPng: false });
+                        } catch(e) {
+                            resolve(null);
+                        }
+                    };
+                    fbImg.onerror = () => resolve(null);
+                    fbImg.src = url;
+                };
+                // Fix: Only add cache buster to external URLs to prevent local 404 errors
+                img.src = url.startsWith('http') ? url + (url.includes('?') ? '&' : '?') + 't=' + new Date().getTime() : url;
             });
         }
 
@@ -711,16 +732,6 @@
                 const ratio = logoData.width / logoData.height;
                 const logoH = logoW / ratio;
                 doc.addImage(logoData.dataUrl, logoData.isPng ? 'PNG' : 'JPEG', 105 - (logoW / 2), 5, logoW, logoH);
-            } else {
-                // Fallback Text Styling to match website
-                doc.setTextColor(20, 20, 20);
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(28);
-                doc.text("IVANTA", 105, 22, { align: "center", charSpace: 4 });
-                doc.setFontSize(10);
-                doc.setFont("helvetica", "normal");
-                doc.setTextColor(205, 169, 94); // brand gold
-                doc.text("HOUSE OF INDUS  |  B2B RETAILER CATALOGUE", 105, 32, { align: "center" });
             }
 
             // Product Core Info
@@ -904,7 +915,8 @@
                     fbImg.onerror = () => resolve(null);
                     fbImg.src = src;
                 };
-                img.src = src + (src.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+                // Fix: Only add cache buster to external URLs to prevent local 404 errors
+                img.src = src.startsWith('http') ? src + (src.includes('?') ? '&' : '?') + 't=' + new Date().getTime() : src;
             });
 
             // Helper to test if drawing the image will taint the canvas (CORS issues on mobile)
@@ -1005,39 +1017,45 @@
                 ctx.textAlign = 'left';
             }
 
-            // Draw Top Brand Badge - Custom Pixel Processing for Clear-Cut transparency
-            if (isSafeToDraw(logoImg)) {
-                ctx.save();
-                const tempC = document.createElement('canvas');
-                tempC.width = logoImg.width;
-                tempC.height = logoImg.height;
-                const tctx = tempC.getContext('2d');
-                tctx.drawImage(logoImg, 0, 0);
-                
-                // Process pixels to remove cream background and turn black logo lines pure white
-                const imgData = tctx.getImageData(0, 0, tempC.width, tempC.height);
-                const data = imgData.data;
-                for(let i = 0; i < data.length; i += 4) {
-                    if(data[i] > 230 && data[i+1] > 230 && data[i+2] > 230) {
-                        data[i+3] = 0; // make background transparent
-                    } else {
-                        data[i] = 255; data[i+1] = 255; data[i+2] = 255; // turn logo white
+            // Draw Top Brand Badge
+            if (logoImg) {
+                if (isSafeToDraw(logoImg)) {
+                    ctx.save();
+                    const tempC = document.createElement('canvas');
+                    tempC.width = logoImg.width;
+                    tempC.height = logoImg.height;
+                    const tctx = tempC.getContext('2d');
+                    tctx.drawImage(logoImg, 0, 0);
+                    
+                    // Process pixels to remove cream background and turn black logo lines pure white
+                    const imgData = tctx.getImageData(0, 0, tempC.width, tempC.height);
+                    const data = imgData.data;
+                    for(let i = 0; i < data.length; i += 4) {
+                        if(data[i] > 230 && data[i+1] > 230 && data[i+2] > 230) {
+                            data[i+3] = 0; // make background transparent
+                        } else {
+                            data[i] = 255; data[i+1] = 255; data[i+2] = 255; // turn logo white
+                        }
                     }
-                }
-                tctx.putImageData(imgData, 0, 0);
+                    tctx.putImageData(imgData, 0, 0);
 
-                const logoH = 75; // properly scaled height
-                const logoRatio = logoImg.width / logoImg.height;
-                const logoW = logoH * logoRatio;
-                
-                ctx.drawImage(tempC, imgX, 55, logoW, logoH);
-                ctx.restore();
-            } else {
-                ctx.fillStyle = 'rgba(24, 24, 27, 0.9)'; // brand-surface
-                ctx.fillRect(imgX, 60, 240, 60);
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '300 24px "Montserrat", sans-serif';
-                ctx.fillText('IVANTA', imgX + 20, 98);
+                    const logoH = 75; // properly scaled height
+                    const logoRatio = logoImg.width / logoImg.height;
+                    const logoW = logoH * logoRatio;
+                    
+                    ctx.drawImage(tempC, imgX, 55, logoW, logoH);
+                    ctx.restore();
+                } else {
+                    // Fallback to drawing the image as-is if canvas is tainted (CORS restriction)
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'screen';
+                    ctx.filter = 'invert(1) contrast(1.2)';
+                    const logoH = 75;
+                    const logoRatio = logoImg.width / logoImg.height;
+                    const logoW = logoH * logoRatio;
+                    ctx.drawImage(logoImg, imgX, 55, logoW, logoH);
+                    ctx.restore();
+                }
             }
             
             // --- Text Overlays ---
