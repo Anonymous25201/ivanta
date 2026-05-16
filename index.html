@@ -106,7 +106,7 @@
                 <!-- Logo -->
                 <div class="logo">
                     <a href="#" onclick="navigate('home')" class="flex flex-col items-center justify-center group inline-block transition-transform duration-300 hover:scale-105">
-                        <img src="./House Of “Indus” (1).jpg" alt="IVANTA Logo" class="h-16 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
+                        <img src="./House Of “Indus” (1).png" alt="IVANTA Logo" class="h-16 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
                     </a>
                 </div>
                 
@@ -402,7 +402,7 @@
             <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
                 <div class="text-center md:text-left">
                     <div class="inline-flex flex-col items-center justify-center group">
-                        <img src="./House Of “Indus” (1).jpg" alt="IVANTA Logo" class="h-20 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
+                        <img src="./House Of “Indus” (1).png" alt="IVANTA Logo" class="h-20 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
                     </div>
                 </div>
                 
@@ -715,7 +715,7 @@
             // Added Logo to the concurrent fetch (Requesting transparent background)
             const [mainImgData, logoData, ...colorImages] = await Promise.all([
                 getBase64FromUrl(mainImgSrc),
-                getBase64FromUrl('./House Of “Indus” (1).jpg', true),
+                getBase64FromUrl('./House Of “Indus” (1).png', true),
                 ...colorPromises
             ]);
 
@@ -937,7 +937,7 @@
             const imgSrc = document.getElementById('pd-main-img').src;
             const [img, logoImg] = await Promise.all([
                 loadImgSafe(imgSrc),
-                loadImgSafe('./House Of “Indus” (1).jpg')
+                loadImgSafe('./House Of “Indus” (1).png')
             ]);
 
             // Fill dark background
