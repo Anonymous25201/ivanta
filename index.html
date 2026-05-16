@@ -642,145 +642,154 @@
             }, 1200);
         }
 
-        // Reusable function to generate the PDF as a Document object
-        async function generatePDFDoc() {
+        // --- NEW B2B RETAILER TOOLS LOGIC --- //
+
+        // Helper function for fetching image as base64 securely
+        function getBase64FromUrl(url) {
             return new Promise((resolve) => {
-                if (!window.jspdf) {
-                    showToast("PDF Library loading, please wait...");
-                    return;
-                }
-                
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-
-                // Draw Top Header Bar
-                doc.setFillColor(10, 10, 10);
-                doc.rect(0, 0, 210, 45, 'F');
-                
-                // Draw IVANTA Logo (Text Styling to match website)
-                doc.setTextColor(255, 255, 255);
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(28);
-                doc.text("IVANTA", 105, 22, { align: "center", charSpace: 4 });
-                
-                // Draw Tagline
-                doc.setFontSize(10);
-                doc.setFont("helvetica", "normal");
-                doc.setTextColor(205, 169, 94); // brand gold
-                doc.text("HOUSE OF INDUS  |  B2B RETAILER CATALOGUE", 105, 32, { align: "center" });
-
-                // Product Core Info
-                doc.setTextColor(20, 20, 20);
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(22);
-                doc.text(currentProduct.title.toUpperCase(), 20, 65);
-
-                doc.setFontSize(14);
-                doc.setTextColor(100, 100, 100);
-                doc.text(`CATEGORY: ${currentProduct.category.toUpperCase()}`, 20, 75);
-                
-                doc.setTextColor(181, 147, 78); // darker gold for print contrast
-                doc.text(`MSRP: ${currentProduct.price}`, 20, 85);
-
-                // Try capturing the image
                 const img = new Image();
                 img.crossOrigin = "Anonymous";
-                // Get the currently displayed image source and append time to break cache
-                img.src = document.getElementById('pd-main-img').src + (document.getElementById('pd-main-img').src.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
-                
-                const drawContentAndResolve = (imgData, originalW, originalH) => {
-                    let yPos = 100;
-                    
-                    // Add Image if available
-                    if (imgData && originalW && originalH) {
-                        try {
-                            // Calculate fixed aspect ratio dimensions to prevent stretching (object-fit: contain logic)
-                            const maxWidth = 85;
-                            const maxHeight = 110;
-                            const ratio = Math.min(maxWidth / originalW, maxHeight / originalH);
-                            
-                            const drawWidth = originalW * ratio;
-                            const drawHeight = originalH * ratio;
-                            
-                            // Center horizontally and vertically within the bounding box
-                            const xOffset = 20 + ((maxWidth - drawWidth) / 2);
-                            const yOffset = yPos + ((maxHeight - drawHeight) / 2);
-                            
-                            doc.addImage(imgData, 'JPEG', xOffset, yOffset, drawWidth, drawHeight);
-                        } catch(e) {
-                            console.warn("Could not embed image");
-                        }
-                    } else {
-                        doc.setFontSize(10);
-                        doc.setTextColor(150, 150, 150);
-                        doc.text("[ Product image omitted due to secure local loading ]", 20, yPos + 30);
-                    }
-                    
-                    // Add Side details
-                    const sideX = 110;
-                    let sideY = yPos + 10;
-                    
-                    doc.setTextColor(50, 50, 50);
-                    doc.setFont("helvetica", "bold");
-                    doc.setFontSize(12);
-                    doc.text("PRODUCT DETAILS:", sideX, sideY);
-                    
-                    doc.setFont("helvetica", "normal");
-                    doc.setFontSize(10);
-                    sideY += 6;
-                    const splitDesc = doc.splitTextToSize(currentProduct.description, 80);
-                    doc.text(splitDesc, sideX, sideY);
-                    
-                    sideY += (splitDesc.length * 6) + 10;
-                    
-                    doc.setFont("helvetica", "bold");
-                    doc.setFontSize(11);
-                    doc.text("AVAILABLE COLORS:", sideX, sideY);
-                    doc.setFont("helvetica", "normal");
-                    doc.setFontSize(10);
-                    sideY += 6;
-                    currentProduct.colors.forEach(c => {
-                        doc.text(`• ${c.name}`, sideX, sideY);
-                        sideY += 6;
-                    });
-                    
-                    sideY += 6;
-                    doc.setFont("helvetica", "bold");
-                    doc.setFontSize(11);
-                    doc.text("STANDARD SIZES (IND/UK):", sideX, sideY);
-                    doc.setFont("helvetica", "normal");
-                    doc.setFontSize(10);
-                    sideY += 6;
-                    doc.text(standardSizes.join('  |  '), sideX, sideY);
-                    
-                    // Footer
-                    doc.setFontSize(9);
-                    doc.setTextColor(150, 150, 150);
-                    doc.text("For wholesale inquiries, contact: concierge@ivanta.com", 105, 280, { align: "center" });
-
-                    // Output Document Object
-                    resolve(doc);
-                };
-
                 img.onload = () => {
                     try {
                         const canvas = document.createElement('canvas');
-                        // Use natural dimensions to prevent distorted reads
                         canvas.width = img.naturalWidth;
                         canvas.height = img.naturalHeight;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0);
-                        const imgData = canvas.toDataURL('image/jpeg', 0.8);
-                        drawContentAndResolve(imgData, img.naturalWidth, img.naturalHeight);
-                    } catch(e) {
-                        drawContentAndResolve(null, null, null); // Fallback if Canvas CORS fails
-                    }
+                        resolve({ dataUrl: canvas.toDataURL('image/jpeg', 0.8), width: img.naturalWidth, height: img.naturalHeight });
+                    } catch(e) { resolve(null); }
                 };
-
-                img.onerror = () => {
-                    drawContentAndResolve(null, null, null);
-                };
+                img.onerror = () => resolve(null);
+                img.src = url + (url.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
             });
+        }
+
+        // Reusable function to generate the PDF as a Document object
+        async function generatePDFDoc() {
+            if (!window.jspdf) {
+                showToast("PDF Library loading, please wait...");
+                throw new Error("jsPDF not loaded");
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Draw Top Header Bar
+            doc.setFillColor(10, 10, 10);
+            doc.rect(0, 0, 210, 45, 'F');
+            
+            // Draw IVANTA Logo (Text Styling to match website)
+            doc.setTextColor(255, 255, 255);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(28);
+            doc.text("IVANTA", 105, 22, { align: "center", charSpace: 4 });
+            
+            // Draw Tagline
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(205, 169, 94); // brand gold
+            doc.text("HOUSE OF INDUS  |  B2B RETAILER CATALOGUE", 105, 32, { align: "center" });
+
+            // Product Core Info
+            doc.setTextColor(20, 20, 20);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(22);
+            doc.text(currentProduct.title.toUpperCase(), 20, 65);
+
+            doc.setFontSize(14);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`CATEGORY: ${currentProduct.category.toUpperCase()}`, 20, 75);
+            
+            doc.setTextColor(181, 147, 78); // darker gold for print contrast
+            doc.text(`MSRP: ${currentProduct.price}`, 20, 85);
+
+            // Fetch Main Image + All Color Images concurrently
+            const mainImgSrc = document.getElementById('pd-main-img').src;
+            const colorPromises = currentProduct.colors.map(async (c) => {
+                const imgData = await getBase64FromUrl(c.image);
+                return { name: c.name, imgData: imgData };
+            });
+
+            const [mainImgData, ...colorImages] = await Promise.all([
+                getBase64FromUrl(mainImgSrc),
+                ...colorPromises
+            ]);
+
+            let yPos = 100;
+            
+            // Draw Main Image
+            if (mainImgData) {
+                const maxWidth = 85;
+                const maxHeight = 110;
+                const ratio = Math.min(maxWidth / mainImgData.width, maxHeight / mainImgData.height);
+                const drawWidth = mainImgData.width * ratio;
+                const drawHeight = mainImgData.height * ratio;
+                const xOffset = 20 + ((maxWidth - drawWidth) / 2);
+                const yOffset = yPos + ((maxHeight - drawHeight) / 2);
+                doc.addImage(mainImgData.dataUrl, 'JPEG', xOffset, yOffset, drawWidth, drawHeight);
+            } else {
+                doc.setFontSize(10);
+                doc.setTextColor(150, 150, 150);
+                doc.text("[ Product image omitted due to secure local loading ]", 20, yPos + 30);
+            }
+
+            // Add Side details
+            const sideX = 110;
+            let sideY = yPos + 10;
+            
+            doc.setTextColor(50, 50, 50);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text("PRODUCT DETAILS:", sideX, sideY);
+            
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            sideY += 6;
+            const splitDesc = doc.splitTextToSize(currentProduct.description, 80);
+            doc.text(splitDesc, sideX, sideY);
+            
+            sideY += (splitDesc.length * 6) + 10;
+            
+            // Draw Color Thumbs and Names
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(11);
+            doc.text("AVAILABLE COLORS:", sideX, sideY);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            sideY += 6;
+            
+            for (const c of colorImages) {
+                let textOffset = sideX;
+                if (c.imgData && c.imgData.dataUrl) {
+                    const tw = 14;
+                    const th = 14;
+                    const r = Math.min(tw / c.imgData.width, th / c.imgData.height);
+                    const dw = c.imgData.width * r;
+                    const dh = c.imgData.height * r;
+                    const dx = sideX + (tw - dw) / 2;
+                    const dy = sideY + (th - dh) / 2;
+                    doc.addImage(c.imgData.dataUrl, 'JPEG', dx, dy, dw, dh);
+                    textOffset = sideX + 18; // Shift text so it's beside the thumbnail
+                }
+                doc.text(`• ${c.name}`, textOffset, sideY + 9);
+                sideY += 16;
+            }
+            
+            sideY += 6;
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(11);
+            doc.text("STANDARD SIZES (IND/UK):", sideX, sideY);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            sideY += 6;
+            doc.text(standardSizes.join('  |  '), sideX, sideY);
+            
+            // Footer
+            doc.setFontSize(9);
+            doc.setTextColor(150, 150, 150);
+            doc.text("For wholesale inquiries, contact: concierge@ivanta.com", 105, 280, { align: "center" });
+
+            return doc;
         }
 
         // Action: Download PDF directly
@@ -840,38 +849,79 @@
             }
             showToast(`Generating specification image for ${currentProduct.title}...`);
             
+            // Create an off-screen canvas to draw our custom catalogue image
             const canvas = document.createElement('canvas');
             canvas.width = 1080;
-            canvas.height = 1350; 
+            canvas.height = 1350; // 4:5 ratio for excellent mobile sharing
             const ctx = canvas.getContext('2d');
             
             const img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.src = document.getElementById('pd-main-img').src + '?t=' + new Date().getTime();
+            img.crossOrigin = "Anonymous"; // Allows canvas to export external images securely
+            // Append timestamp to prevent CORS cache issues
+            img.src = document.getElementById('pd-main-img').src + (document.getElementById('pd-main-img').src.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
             
             img.onload = () => {
                 try {
+                    // Fill dark background
                     ctx.fillStyle = '#0a0a0a';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                    const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
-                    const x = (canvas.width - img.width * scale) / 2;
-                    const y = (canvas.height - img.height * scale) / 2;
-                    ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-                    
-                    const gradient = ctx.createLinearGradient(0, canvas.height - 700, 0, canvas.height);
-                    gradient.addColorStop(0, 'rgba(10, 10, 10, 0)');
-                    gradient.addColorStop(0.3, 'rgba(10, 10, 10, 0.85)');
-                    gradient.addColorStop(1, 'rgba(10, 10, 10, 1)');
-                    ctx.fillStyle = gradient;
-                    ctx.fillRect(0, canvas.height - 700, canvas.width, 700);
+                    // Image boundaries and border radius
+                    const imgW = 960;
+                    const imgH = 680;
+                    const imgX = (canvas.width - imgW) / 2;
+                    const imgY = 140;
+                    const radius = 24;
 
-                    ctx.fillStyle = 'rgba(10, 10, 10, 0.6)';
-                    ctx.fillRect(40, 40, 240, 60);
+                    // Draw clipping path for rounded image
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(imgX + radius, imgY);
+                    ctx.lineTo(imgX + imgW - radius, imgY);
+                    ctx.quadraticCurveTo(imgX + imgW, imgY, imgX + imgW, imgY + radius);
+                    ctx.lineTo(imgX + imgW, imgY + imgH - radius);
+                    ctx.quadraticCurveTo(imgX + imgW, imgY + imgH, imgX + imgW - radius, imgY + imgH);
+                    ctx.lineTo(imgX + radius, imgY + imgH);
+                    ctx.quadraticCurveTo(imgX, imgY + imgH, imgX, imgY + imgH - radius);
+                    ctx.lineTo(imgX, imgY + radius);
+                    ctx.quadraticCurveTo(imgX, imgY, imgX + radius, imgY);
+                    ctx.closePath();
+                    
+                    // Clip and draw image inside bounds without stretching
+                    ctx.clip();
+                    const scale = Math.max(imgW / img.width, imgH / img.height);
+                    const drawW = img.width * scale;
+                    const drawH = img.height * scale;
+                    const drawX = imgX + (imgW - drawW) / 2;
+                    const drawY = imgY + (imgH - drawH) / 2;
+                    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+                    ctx.restore();
+
+                    // Draw Gold Border around the image
+                    ctx.strokeStyle = '#cda95e';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(imgX + radius, imgY);
+                    ctx.lineTo(imgX + imgW - radius, imgY);
+                    ctx.quadraticCurveTo(imgX + imgW, imgY, imgX + imgW, imgY + radius);
+                    ctx.lineTo(imgX + imgW, imgY + imgH - radius);
+                    ctx.quadraticCurveTo(imgX + imgW, imgY + imgH, imgX + imgW - radius, imgY + imgH);
+                    ctx.lineTo(imgX + radius, imgY + imgH);
+                    ctx.quadraticCurveTo(imgX, imgY + imgH, imgX, imgY + imgH - radius);
+                    ctx.lineTo(imgX, imgY + radius);
+                    ctx.quadraticCurveTo(imgX, imgY, imgX + radius, imgY);
+                    ctx.closePath();
+                    ctx.stroke();
+
+                    // Top Left Brand Badge
+                    ctx.fillStyle = 'rgba(24, 24, 27, 0.9)'; // brand-surface
+                    ctx.fillRect(60, 40, 240, 60);
                     ctx.fillStyle = '#ffffff';
                     ctx.font = '300 24px "Montserrat", sans-serif';
                     ctx.fillText('IVANTA', 60, 78);
                     
+                    // --- Text Overlays ---
+                    // Product Title
                     ctx.fillStyle = '#ffffff';
                     ctx.font = 'bold 56px "Playfair Display", serif';
                     ctx.fillText(currentProduct.title, 60, canvas.height - 420);
