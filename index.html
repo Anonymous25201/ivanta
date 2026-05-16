@@ -102,11 +102,11 @@
 
     <header class="header fixed w-full top-0 z-40 glass-nav border-b border-brand-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
+            <div class="flex justify-between items-center h-28">
                 <!-- Logo -->
                 <div class="logo">
                     <a href="#" onclick="navigate('home')" class="flex flex-col items-center justify-center group inline-block transition-transform duration-300 hover:scale-105">
-                        <img src="./House Of “Indus” (1).png" alt="IVANTA Logo" class="h-16 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
+                        <img src="./House Of “Indus” (1).jpg" alt="IVANTA Logo" class="h-24 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
                     </a>
                 </div>
                 
@@ -129,7 +129,7 @@
 
         <!-- Mobile Menu (Hidden by default) -->
         <div id="mobile-menu" class="hidden md:hidden bg-brand-surface border-b border-brand-border">
-            <ul class="px-4 py-4 space-y-4 text-sm font-medium tracking-widest uppercase text-center">
+            <ul class="px-4 py-4 space-y-4 text-sm font-medium tracking-widest uppercase text-center mt-28">
                 <li><a href="#" onclick="navigate('home'); toggleMobileMenu()" class="block text-zinc-400 hover:text-brand-gold">Home</a></li>
                 <li><a href="#" onclick="navigate('shop'); toggleMobileMenu()" class="block text-zinc-400 hover:text-brand-gold">Shop</a></li>
                 <li><a href="#" onclick="navigate('about'); toggleMobileMenu()" class="block text-zinc-400 hover:text-brand-gold">About</a></li>
@@ -139,7 +139,7 @@
     </header>
 
     <!-- Main Content Area -->
-    <main class="flex-grow pt-20">
+    <main class="flex-grow pt-28">
         
         <div id="view-home" class="page-view active">
             <!-- Hero Banner -->
@@ -266,7 +266,7 @@
                                 <button onclick="shareWhatsApp()" class="flex items-center justify-center gap-2 text-xs uppercase tracking-widest text-zinc-400 border border-zinc-800 py-3 hover:text-[#25D366] hover:border-[#25D366] transition-colors rounded-sm">
                                     <!-- WhatsApp Icon -->
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                                    Share PDF
+                                    WhatsApp
                                 </button>
                                 <button onclick="shareProduct()" class="flex items-center justify-center gap-2 text-xs uppercase tracking-widest text-zinc-400 border border-zinc-800 py-3 hover:text-brand-gold hover:border-brand-gold transition-colors rounded-sm">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
@@ -402,7 +402,7 @@
             <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
                 <div class="text-center md:text-left">
                     <div class="inline-flex flex-col items-center justify-center group">
-                        <img src="./House Of “Indus” (1).png" alt="IVANTA Logo" class="h-20 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
+                        <img src="./House Of “Indus” (1).jpg" alt="IVANTA Logo" class="h-32 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
                     </div>
                 </div>
                 
@@ -715,20 +715,20 @@
             // Added Logo to the concurrent fetch (Requesting transparent background)
             const [mainImgData, logoData, ...colorImages] = await Promise.all([
                 getBase64FromUrl(mainImgSrc),
-                getBase64FromUrl('./House Of “Indus” (1).png', true),
+                getBase64FromUrl('./House Of “Indus” (1).jpg', true),
                 ...colorPromises
             ]);
 
             // Draw Top Header Bar (Now White for crisp logo printing)
             doc.setFillColor(252, 252, 252);
-            doc.rect(0, 0, 210, 45, 'F');
+            doc.rect(0, 0, 210, 65, 'F');
             doc.setDrawColor(205, 169, 94); // brand gold border
             doc.setLineWidth(0.5);
-            doc.line(0, 45, 210, 45);
+            doc.line(0, 65, 210, 65);
             
-            // Draw IVANTA Logo perfectly clear-cut
+            // Draw IVANTA Logo perfectly clear-cut (Increased Size)
             if (logoData && logoData.dataUrl) {
-                const logoW = 35;
+                const logoW = 55;
                 const ratio = logoData.width / logoData.height;
                 const logoH = logoW / ratio;
                 doc.addImage(logoData.dataUrl, logoData.isPng ? 'PNG' : 'JPEG', 105 - (logoW / 2), 5, logoW, logoH);
@@ -738,16 +738,16 @@
             doc.setTextColor(20, 20, 20);
             doc.setFont("helvetica", "bold");
             doc.setFontSize(22);
-            doc.text(currentProduct.title.toUpperCase(), 20, 65);
+            doc.text(currentProduct.title.toUpperCase(), 20, 80);
 
             doc.setFontSize(14);
             doc.setTextColor(100, 100, 100);
-            doc.text(`CATEGORY: ${currentProduct.category.toUpperCase()}`, 20, 75);
+            doc.text(`CATEGORY: ${currentProduct.category.toUpperCase()}`, 20, 90);
             
             doc.setTextColor(181, 147, 78); // darker gold for print contrast
-            doc.text(`MSRP: ${currentProduct.price}`, 20, 85);
+            doc.text(`MSRP: ${currentProduct.price}`, 20, 100);
 
-            let yPos = 100;
+            let yPos = 115;
             
             // Draw Main Image
             if (mainImgData) {
@@ -937,7 +937,7 @@
             const imgSrc = document.getElementById('pd-main-img').src;
             const [img, logoImg] = await Promise.all([
                 loadImgSafe(imgSrc),
-                loadImgSafe('./House Of “Indus” (1).png')
+                loadImgSafe('./House Of “Indus” (1).jpg')
             ]);
 
             // Fill dark background
@@ -1017,7 +1017,7 @@
                 ctx.textAlign = 'left';
             }
 
-            // Draw Top Brand Badge
+            // Draw Top Brand Badge (Increased Size)
             if (logoImg) {
                 if (isSafeToDraw(logoImg)) {
                     ctx.save();
@@ -1039,21 +1039,21 @@
                     }
                     tctx.putImageData(imgData, 0, 0);
 
-                    const logoH = 75; // properly scaled height
+                    const logoH = 120; // Increased properly scaled height
                     const logoRatio = logoImg.width / logoImg.height;
                     const logoW = logoH * logoRatio;
                     
-                    ctx.drawImage(tempC, imgX, 55, logoW, logoH);
+                    ctx.drawImage(tempC, imgX, 20, logoW, logoH); // Adjusted Y position
                     ctx.restore();
                 } else {
                     // Fallback to drawing the image as-is if canvas is tainted (CORS restriction)
                     ctx.save();
                     ctx.globalCompositeOperation = 'screen';
                     ctx.filter = 'invert(1) contrast(1.2)';
-                    const logoH = 75;
+                    const logoH = 120; // Increased
                     const logoRatio = logoImg.width / logoImg.height;
                     const logoW = logoH * logoRatio;
-                    ctx.drawImage(logoImg, imgX, 55, logoW, logoH);
+                    ctx.drawImage(logoImg, imgX, 20, logoW, logoH); // Adjusted Y position
                     ctx.restore();
                 }
             }
