@@ -106,9 +106,7 @@
                 <!-- Logo -->
                 <div class="logo">
                     <a href="#" onclick="navigate('home')" class="flex flex-col items-center justify-center group inline-block transition-transform duration-300 hover:scale-105">
-                        <span class="font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]">IVANTA</span>
-                        <div class="w-full h-[1px] bg-zinc-400 mt-1.5 mb-1"></div>
-                        <span class="font-sans text-[0.65rem] font-semibold tracking-wider text-white">House Of "Indus"</span>
+                        <img src="./House Of “Indus” (1).jpg" alt="IVANTA Logo" class="h-16 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
                     </a>
                 </div>
                 
@@ -404,9 +402,7 @@
             <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
                 <div class="text-center md:text-left">
                     <div class="inline-flex flex-col items-center justify-center group">
-                        <span class="font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]">IVANTA</span>
-                        <div class="w-full h-[1px] bg-zinc-400 mt-1.5 mb-1"></div>
-                        <span class="font-sans text-[0.65rem] font-semibold tracking-wider text-white">House Of "Indus"</span>
+                        <img src="./House Of “Indus” (1).jpg" alt="IVANTA Logo" class="h-20 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
                     </div>
                 </div>
                 
@@ -674,21 +670,44 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            // Draw Top Header Bar
-            doc.setFillColor(10, 10, 10);
+            // Fetch Main Image + All Color Images concurrently
+            const mainImgSrc = document.getElementById('pd-main-img').src;
+            const colorPromises = currentProduct.colors.map(async (c) => {
+                const imgData = await getBase64FromUrl(c.image);
+                return { name: c.name, imgData: imgData };
+            });
+
+            // Added Logo to the concurrent fetch
+            const [mainImgData, logoData, ...colorImages] = await Promise.all([
+                getBase64FromUrl(mainImgSrc),
+                getBase64FromUrl('./House Of “Indus” (1).jpg'),
+                ...colorPromises
+            ]);
+
+            // Draw Top Header Bar (Now White for crisp logo printing)
+            doc.setFillColor(252, 252, 252);
             doc.rect(0, 0, 210, 45, 'F');
+            doc.setDrawColor(205, 169, 94); // brand gold border
+            doc.setLineWidth(0.5);
+            doc.line(0, 45, 210, 45);
             
-            // Draw IVANTA Logo (Text Styling to match website)
-            doc.setTextColor(255, 255, 255);
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(28);
-            doc.text("IVANTA", 105, 22, { align: "center", charSpace: 4 });
-            
-            // Draw Tagline
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "normal");
-            doc.setTextColor(205, 169, 94); // brand gold
-            doc.text("HOUSE OF INDUS  |  B2B RETAILER CATALOGUE", 105, 32, { align: "center" });
+            // Draw IVANTA Logo
+            if (logoData && logoData.dataUrl) {
+                const logoW = 35;
+                const ratio = logoData.width / logoData.height;
+                const logoH = logoW / ratio;
+                doc.addImage(logoData.dataUrl, 'JPEG', 105 - (logoW / 2), 5, logoW, logoH);
+            } else {
+                // Fallback Text Styling to match website
+                doc.setTextColor(20, 20, 20);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(28);
+                doc.text("IVANTA", 105, 22, { align: "center", charSpace: 4 });
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "normal");
+                doc.setTextColor(205, 169, 94); // brand gold
+                doc.text("HOUSE OF INDUS  |  B2B RETAILER CATALOGUE", 105, 32, { align: "center" });
+            }
 
             // Product Core Info
             doc.setTextColor(20, 20, 20);
@@ -702,18 +721,6 @@
             
             doc.setTextColor(181, 147, 78); // darker gold for print contrast
             doc.text(`MSRP: ${currentProduct.price}`, 20, 85);
-
-            // Fetch Main Image + All Color Images concurrently
-            const mainImgSrc = document.getElementById('pd-main-img').src;
-            const colorPromises = currentProduct.colors.map(async (c) => {
-                const imgData = await getBase64FromUrl(c.image);
-                return { name: c.name, imgData: imgData };
-            });
-
-            const [mainImgData, ...colorImages] = await Promise.all([
-                getBase64FromUrl(mainImgSrc),
-                ...colorPromises
-            ]);
 
             let yPos = 100;
             
@@ -858,7 +865,7 @@
             context.fillText(line, x, y);
         }
 
-        window.downloadImage = function() {
+        window.downloadImage = async function() {
             if (!currentProduct) return;
             if (!selectedColor || !selectedSize) {
                 showToast("Please select a color and size to generate the specification image.");
@@ -872,23 +879,37 @@
             canvas.height = 1350; // 4:5 ratio for excellent mobile sharing
             const ctx = canvas.getContext('2d');
             
-            const img = new Image();
-            img.crossOrigin = "Anonymous"; // Allows canvas to export external images securely
-            // Append timestamp to prevent CORS cache issues
-            img.src = document.getElementById('pd-main-img').src + (document.getElementById('pd-main-img').src.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
-            
-            img.onload = () => {
-                try {
-                    // Fill dark background
-                    ctx.fillStyle = '#0a0a0a';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Helper function to load image via Promise for better async handling
+            const loadImg = (src) => new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = "Anonymous";
+                img.onload = () => resolve(img);
+                img.onerror = () => resolve(null);
+                img.src = src + (src.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+            });
 
-                    // Image boundaries and border radius
-                    const imgW = 960;
-                    const imgH = 680;
+            const imgSrc = document.getElementById('pd-main-img').src;
+            const [img, logoImg] = await Promise.all([
+                loadImg(imgSrc),
+                loadImg('./House Of “Indus” (1).jpg')
+            ]);
+            
+            if (!img) {
+                showToast("Failed to load image for specification sheet.");
+                return;
+            }
+
+            try {
+                // Fill dark background
+                ctx.fillStyle = '#0a0a0a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Image boundaries and border radius
+                    const imgW = 840;
+                    const imgH = 600;
                     const imgX = (canvas.width - imgW) / 2;
-                    const imgY = 140;
-                    const radius = 24;
+                    const imgY = 160;
+                    const radius = 20;
 
                     // Draw clipping path for rounded image
                     ctx.save();
@@ -903,97 +924,76 @@
                     ctx.lineTo(imgX, imgY + radius);
                     ctx.quadraticCurveTo(imgX, imgY, imgX + radius, imgY);
                     ctx.closePath();
-                    
-                    // Clip and draw image inside bounds without stretching
-                    ctx.clip();
-                    const scale = Math.max(imgW / img.width, imgH / img.height);
-                    const drawW = img.width * scale;
-                    const drawH = img.height * scale;
-                    const drawX = imgX + (imgW - drawW) / 2;
-                    const drawY = imgY + (imgH - drawH) / 2;
-                    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+                ctx.stroke();
+
+                // Draw Top Brand Badge (Using loaded Logo or Fallback Text)
+                if (logoImg) {
+                    ctx.save();
+                    // Composite mode removes the white background on canvas
+                    ctx.globalCompositeOperation = 'screen';
+                    ctx.filter = 'invert(1) contrast(1.2)';
+                    ctx.drawImage(logoImg, imgX, 50, 100, 100);
                     ctx.restore();
-
-                    // Draw Gold Border around the image
-                    ctx.strokeStyle = '#cda95e';
-                    ctx.lineWidth = 3;
-                    ctx.beginPath();
-                    ctx.moveTo(imgX + radius, imgY);
-                    ctx.lineTo(imgX + imgW - radius, imgY);
-                    ctx.quadraticCurveTo(imgX + imgW, imgY, imgX + imgW, imgY + radius);
-                    ctx.lineTo(imgX + imgW, imgY + imgH - radius);
-                    ctx.quadraticCurveTo(imgX + imgW, imgY + imgH, imgX + imgW - radius, imgY + imgH);
-                    ctx.lineTo(imgX + radius, imgY + imgH);
-                    ctx.quadraticCurveTo(imgX, imgY + imgH, imgX, imgY + imgH - radius);
-                    ctx.lineTo(imgX, imgY + radius);
-                    ctx.quadraticCurveTo(imgX, imgY, imgX + radius, imgY);
-                    ctx.closePath();
-                    ctx.stroke();
-
-                    // Top Left Brand Badge
+                } else {
                     ctx.fillStyle = 'rgba(24, 24, 27, 0.9)'; // brand-surface
-                    ctx.fillRect(60, 40, 240, 60);
+                    ctx.fillRect(imgX, 60, 240, 60);
                     ctx.fillStyle = '#ffffff';
                     ctx.font = '300 24px "Montserrat", sans-serif';
-                    ctx.fillText('IVANTA', 60, 78);
-                    
-                    // --- Text Overlays ---
-                    // Product Title
+                    ctx.fillText('IVANTA', imgX + 20, 98);
+                }
+                
+                // --- Text Overlays ---
+                // Product Title
                     ctx.fillStyle = '#ffffff';
                     ctx.font = 'bold 56px "Playfair Display", serif';
-                    ctx.fillText(currentProduct.title, 60, canvas.height - 420);
+                    ctx.fillText(currentProduct.title, imgX, canvas.height - 430);
                     
                     ctx.fillStyle = '#cda95e'; 
                     ctx.font = '500 28px "Inter", sans-serif';
-                    ctx.fillText(`${currentProduct.category.toUpperCase()}  |  ${currentProduct.price}`, 60, canvas.height - 370);
+                    ctx.fillText(`${currentProduct.category.toUpperCase()}  |  ${currentProduct.price}`, imgX, canvas.height - 380);
                     
                     ctx.fillStyle = 'rgba(24, 24, 27, 0.9)'; 
                     ctx.strokeStyle = '#cda95e'; 
                     ctx.lineWidth = 1;
-                    ctx.fillRect(60, canvas.height - 320, canvas.width - 120, 110);
-                    ctx.strokeRect(60, canvas.height - 320, canvas.width - 120, 110);
+                    ctx.fillRect(imgX, canvas.height - 330, imgW, 110);
+                    ctx.strokeRect(imgX, canvas.height - 330, imgW, 110);
                     
                     ctx.fillStyle = '#a1a1aa'; 
                     ctx.font = '400 22px "Inter", sans-serif';
-                    ctx.fillText('SELECTED COLOR', 100, canvas.height - 275);
-                    ctx.fillText('SELECTED SIZE', 500, canvas.height - 275);
+                    ctx.fillText('SELECTED COLOR', imgX + 40, canvas.height - 285);
+                    ctx.fillText('SELECTED SIZE', imgX + 440, canvas.height - 285);
                     
                     ctx.fillStyle = '#ffffff';
                     ctx.font = '700 26px "Inter", sans-serif';
-                    ctx.fillText(selectedColor.toUpperCase(), 100, canvas.height - 240);
-                    ctx.fillText(selectedSize, 500, canvas.height - 240);
+                    ctx.fillText(selectedColor.toUpperCase(), imgX + 40, canvas.height - 250);
+                    ctx.fillText(selectedSize, imgX + 440, canvas.height - 250);
                     
                     ctx.fillStyle = '#d4d4d8'; 
                     ctx.font = '300 24px "Inter", sans-serif';
-                    wrapText(ctx, currentProduct.description, 60, canvas.height - 150, canvas.width - 120, 36);
+                    wrapText(ctx, currentProduct.description, imgX, canvas.height - 160, imgW, 36);
                     
                     ctx.fillStyle = '#52525b'; 
                     ctx.font = '500 18px "Inter", sans-serif';
-                    ctx.fillText('HOUSE OF INDUS B2B RETAILER SPECIFICATION', 60, canvas.height - 50);
+                    ctx.fillText('HOUSE OF INDUS B2B RETAILER SPECIFICATION', imgX, canvas.height - 50);
 
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
                     const link = document.createElement('a');
                     link.href = dataUrl;
                     link.download = `IVANTA-${currentProduct.title.replace(/\s+/g, '-').toUpperCase()}-${selectedColor.replace(/\s+/g, '-')}-SZ${selectedSize}.jpg`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    
-                } catch (e) {
-                    showToast("Security settings prevented custom image. Downloading standard image...");
-                    const imgSrc = document.getElementById('pd-main-img').src;
-                    const link = document.createElement('a');
-                    link.href = imgSrc;
-                    link.download = `IVANTA-${currentProduct.title.replace(/\s+/g, '-').toUpperCase()}-IMAGE.jpg`;
-                    link.target = "_blank";
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }
-            };
-            img.onerror = () => {
-                showToast("Failed to load image for specification sheet.");
-            };
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+            } catch (e) {
+                showToast("Security settings prevented custom image. Downloading standard image...");
+                const link = document.createElement('a');
+                link.href = img.src;
+                link.download = `IVANTA-${currentProduct.title.replace(/\s+/g, '-').toUpperCase()}-IMAGE.jpg`;
+                link.target = "_blank";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         }
 
         // Action: Share PDF Document to WhatsApp directly (Mobile) or download with instructions (Desktop)
