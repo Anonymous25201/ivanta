@@ -8,7 +8,6 @@
     <!-- Google Fonts for Luxury Aesthetic -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Added Montserrat for the exact logo font style match -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
@@ -20,7 +19,7 @@
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         serif: ['Playfair Display', 'serif'],
-                        logo: ['Montserrat', 'sans-serif'], // Added custom logo font
+                        logo: ['Montserrat', 'sans-serif'],
                     },
                     colors: {
                         brand: {
@@ -38,6 +37,9 @@
         }
     </script>
     
+    <!-- jsPDF Library for dynamically generating PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <!-- Internal CSS for Page Transitions & Custom Styling -->
     <style>
         /* Custom scrollbar */
@@ -98,7 +100,6 @@
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
-    <!-- Header Navigation -->
     <header class="header fixed w-full top-0 z-40 glass-nav border-b border-brand-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
@@ -142,9 +143,6 @@
     <!-- Main Content Area -->
     <main class="flex-grow pt-20">
         
-        <!-- ==========================================
-             PAGE 1: HOME
-             ========================================== -->
         <div id="view-home" class="page-view active">
             <!-- Hero Banner -->
             <section class="relative h-[85vh] flex items-center justify-center border-b border-brand-border">
@@ -190,9 +188,6 @@
         </div>
 
 
-        <!-- ==========================================
-             PAGE 2: SHOP
-             ========================================== -->
         <div id="view-shop" class="page-view py-12">
             
             <div class="text-center py-12 mb-8 bg-brand-surface border-b border-brand-border">
@@ -209,9 +204,6 @@
             </div>
         </div>
 
-        <!-- ==========================================
-             PAGE 5: PRODUCT DETAIL
-             ========================================== -->
         <div id="view-product" class="page-view py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
                 <button onclick="navigate('shop')" class="text-brand-gold text-sm tracking-widest uppercase mb-8 flex items-center gap-2 hover:text-white transition-colors">
@@ -222,7 +214,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
                     <!-- Images -->
                     <div class="flex flex-col gap-4">
-                        <div class="aspect-[4/5] bg-zinc-900 border border-brand-border relative group">
+                        <div class="aspect-[4/5] bg-zinc-900 border border-brand-border relative group overflow-hidden">
                             <img id="pd-main-img" src="" alt="Product" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80'">
                         </div>
                     </div>
@@ -276,7 +268,7 @@
                                 <button onclick="shareWhatsApp()" class="flex items-center justify-center gap-2 text-xs uppercase tracking-widest text-zinc-400 border border-zinc-800 py-3 hover:text-[#25D366] hover:border-[#25D366] transition-colors rounded-sm">
                                     <!-- WhatsApp Icon -->
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                                    WhatsApp
+                                    Share PDF
                                 </button>
                                 <button onclick="shareProduct()" class="flex items-center justify-center gap-2 text-xs uppercase tracking-widest text-zinc-400 border border-zinc-800 py-3 hover:text-brand-gold hover:border-brand-gold transition-colors rounded-sm">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
@@ -290,9 +282,6 @@
             </div>
         </div>
 
-        <!-- ==========================================
-             PAGE 3: ABOUT
-             ========================================== -->
         <div id="view-about" class="page-view py-12">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
@@ -323,9 +312,6 @@
         </div>
 
 
-        <!-- ==========================================
-             PAGE 4: CONTACT
-             ========================================== -->
         <div id="view-contact" class="page-view py-12">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 
@@ -438,7 +424,6 @@
     </footer>
 
 
-    <!-- Interactive Scripts -->
     <script>
         // Custom Toast Notification System
         window.showToast = function(message) {
@@ -462,20 +447,15 @@
 
         // SPA Navigation logic (Simulates multiple pages)
         window.navigate = function(viewId) {
-            // Hide all pages
             document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
-            // Show target page
             document.getElementById(`view-${viewId}`).classList.add('active');
             
-            // Update active state in desktop navigation
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
                 if(link.getAttribute('data-target') === viewId) {
                     link.classList.add('active');
                 }
             });
-
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -492,10 +472,6 @@
             e.target.reset();
         }
 
-        // ==========================================
-        // MOCK DATABASE & SHOP LOGIC
-        // ==========================================
-        
         const productsDB = [
             {
                 id: 'loaf-1',
@@ -503,7 +479,7 @@
                 price: '₹5,690',
                 category: 'Loafers',
                 description: 'Handcrafted from premium full-grain Italian leather, delivering a distinguished look for formal and smart-casual attire. The timeless design ensures versatility across your wardrobe.',
-                image: './IV-103 BLACK.jpg', /* Change this to './1.jpg' when running on your computer */
+                image: './IV-103 BLACK.jpg', 
                 colors: [
                     { name: 'Obsidian Black', hex: '#000000', image: './IV-103 BLACK.jpg' },
                     { name: 'Midnight Blue', hex: '#191970', image: './IV-103 BROWN.jpg' }
@@ -561,7 +537,6 @@
             }
         ];
 
-        // Specific sizes defined by the brand
         const standardSizes = ['6X9', '6X10', '7X10'];
 
         let currentProduct = null;
@@ -598,13 +573,9 @@
         window.selectColor = function(colorName, btnElement, imageUrl) {
             selectedColor = colorName;
             document.getElementById('pd-color-name').textContent = colorName;
-            
-            // Update the main image to the selected color's image
             if (imageUrl) {
                 document.getElementById('pd-main-img').src = imageUrl;
             }
-            
-            // update UI
             document.querySelectorAll('.color-btn').forEach(b => {
                 b.classList.remove('ring-2', 'ring-brand-gold', 'ring-offset-2', 'ring-offset-brand-surface', 'scale-110');
             });
@@ -613,8 +584,6 @@
 
         window.selectSize = function(size, btnElement) {
             selectedSize = size;
-            
-            // update UI
             document.querySelectorAll('.size-btn').forEach(b => {
                 b.classList.remove('border-brand-gold', 'text-brand-gold', 'bg-brand-gold/10');
                 b.classList.add('border-zinc-700', 'text-zinc-300');
@@ -631,7 +600,6 @@
             selectedColor = null;
             selectedSize = null;
 
-            // Set Details
             document.getElementById('pd-main-img').src = p.image;
             document.getElementById('pd-category').textContent = p.category;
             document.getElementById('pd-title').textContent = p.title;
@@ -639,13 +607,11 @@
             document.getElementById('pd-description').textContent = p.description;
             document.getElementById('pd-color-name').textContent = 'Select a color';
 
-            // Render Colors with image URLs attached
             const colorsHtml = p.colors.map(c => `
                 <button onclick="selectColor('${c.name}', this, '${c.image}')" class="color-btn w-10 h-10 rounded-full border border-zinc-600 transition-all focus:outline-none shadow-sm hover:scale-110" style="background-color: ${c.hex}" title="${c.name}"></button>
             `).join('');
             document.getElementById('pd-colors').innerHTML = colorsHtml;
 
-            // Render Sizes
             const sizesHtml = standardSizes.map(s => `
                 <button onclick="selectSize('${s}', this)" class="size-btn border border-zinc-700 py-3 text-sm text-zinc-300 transition-all focus:outline-none uppercase tracking-wider hover:border-zinc-500">${s}</button>
             `).join('');
@@ -676,21 +642,174 @@
             }, 1200);
         }
 
-        // --- NEW B2B RETAILER TOOLS LOGIC --- //
+        // Reusable function to generate the PDF as a Document object
+        async function generatePDFDoc() {
+            return new Promise((resolve) => {
+                if (!window.jspdf) {
+                    showToast("PDF Library loading, please wait...");
+                    return;
+                }
+                
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
 
-        window.downloadCatalogue = function() {
+                // Draw Top Header Bar
+                doc.setFillColor(10, 10, 10);
+                doc.rect(0, 0, 210, 45, 'F');
+                
+                // Draw IVANTA Logo (Text Styling to match website)
+                doc.setTextColor(255, 255, 255);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(28);
+                doc.text("IVANTA", 105, 22, { align: "center", charSpace: 4 });
+                
+                // Draw Tagline
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "normal");
+                doc.setTextColor(205, 169, 94); // brand gold
+                doc.text("HOUSE OF INDUS  |  B2B RETAILER CATALOGUE", 105, 32, { align: "center" });
+
+                // Product Core Info
+                doc.setTextColor(20, 20, 20);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(22);
+                doc.text(currentProduct.title.toUpperCase(), 20, 65);
+
+                doc.setFontSize(14);
+                doc.setTextColor(100, 100, 100);
+                doc.text(`CATEGORY: ${currentProduct.category.toUpperCase()}`, 20, 75);
+                
+                doc.setTextColor(181, 147, 78); // darker gold for print contrast
+                doc.text(`MSRP: ${currentProduct.price}`, 20, 85);
+
+                // Try capturing the image
+                const img = new Image();
+                img.crossOrigin = "Anonymous";
+                // Get the currently displayed image source and append time to break cache
+                img.src = document.getElementById('pd-main-img').src + (document.getElementById('pd-main-img').src.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+                
+                const drawContentAndResolve = (imgData, originalW, originalH) => {
+                    let yPos = 100;
+                    
+                    // Add Image if available
+                    if (imgData && originalW && originalH) {
+                        try {
+                            // Calculate fixed aspect ratio dimensions to prevent stretching (object-fit: contain logic)
+                            const maxWidth = 85;
+                            const maxHeight = 110;
+                            const ratio = Math.min(maxWidth / originalW, maxHeight / originalH);
+                            
+                            const drawWidth = originalW * ratio;
+                            const drawHeight = originalH * ratio;
+                            
+                            // Center horizontally and vertically within the bounding box
+                            const xOffset = 20 + ((maxWidth - drawWidth) / 2);
+                            const yOffset = yPos + ((maxHeight - drawHeight) / 2);
+                            
+                            doc.addImage(imgData, 'JPEG', xOffset, yOffset, drawWidth, drawHeight);
+                        } catch(e) {
+                            console.warn("Could not embed image");
+                        }
+                    } else {
+                        doc.setFontSize(10);
+                        doc.setTextColor(150, 150, 150);
+                        doc.text("[ Product image omitted due to secure local loading ]", 20, yPos + 30);
+                    }
+                    
+                    // Add Side details
+                    const sideX = 110;
+                    let sideY = yPos + 10;
+                    
+                    doc.setTextColor(50, 50, 50);
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(12);
+                    doc.text("PRODUCT DETAILS:", sideX, sideY);
+                    
+                    doc.setFont("helvetica", "normal");
+                    doc.setFontSize(10);
+                    sideY += 6;
+                    const splitDesc = doc.splitTextToSize(currentProduct.description, 80);
+                    doc.text(splitDesc, sideX, sideY);
+                    
+                    sideY += (splitDesc.length * 6) + 10;
+                    
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(11);
+                    doc.text("AVAILABLE COLORS:", sideX, sideY);
+                    doc.setFont("helvetica", "normal");
+                    doc.setFontSize(10);
+                    sideY += 6;
+                    currentProduct.colors.forEach(c => {
+                        doc.text(`• ${c.name}`, sideX, sideY);
+                        sideY += 6;
+                    });
+                    
+                    sideY += 6;
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(11);
+                    doc.text("STANDARD SIZES (IND/UK):", sideX, sideY);
+                    doc.setFont("helvetica", "normal");
+                    doc.setFontSize(10);
+                    sideY += 6;
+                    doc.text(standardSizes.join('  |  '), sideX, sideY);
+                    
+                    // Footer
+                    doc.setFontSize(9);
+                    doc.setTextColor(150, 150, 150);
+                    doc.text("For wholesale inquiries, contact: concierge@ivanta.com", 105, 280, { align: "center" });
+
+                    // Output Document Object
+                    resolve(doc);
+                };
+
+                img.onload = () => {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        // Use natural dimensions to prevent distorted reads
+                        canvas.width = img.naturalWidth;
+                        canvas.height = img.naturalHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        const imgData = canvas.toDataURL('image/jpeg', 0.8);
+                        drawContentAndResolve(imgData, img.naturalWidth, img.naturalHeight);
+                    } catch(e) {
+                        drawContentAndResolve(null, null, null); // Fallback if Canvas CORS fails
+                    }
+                };
+
+                img.onerror = () => {
+                    drawContentAndResolve(null, null, null);
+                };
+            });
+        }
+
+        // Action: Download PDF directly
+        window.downloadCatalogue = async function() {
             if (!currentProduct) return;
             showToast(`Generating PDF catalogue for ${currentProduct.title}...`);
             
-            // Simulates downloading a PDF by creating a temporary anchor tag
-            setTimeout(() => {
+            try {
+                const doc = await generatePDFDoc();
+                const blob = doc.output('blob');
+                const url = URL.createObjectURL(blob);
+                const fileName = `IVANTA-${currentProduct.title.replace(/\s+/g, '-').toUpperCase()}-CATALOGUE.pdf`;
+                
                 const link = document.createElement('a');
-                link.href = '#'; // In a real app, this would be the URL to your hosted PDF file
-                link.download = `IVANTA-${currentProduct.title.replace(/\s+/g, '-').toUpperCase()}-CATALOGUE.pdf`;
+                link.href = url;
+                link.download = fileName;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-            }, 800);
+                
+                // CRITICAL FIX FOR MOBILE: 
+                // Delay revocation of the URL to ensure mobile OS (Safari/Chrome) has time to initiate the download intent.
+                setTimeout(() => URL.revokeObjectURL(url), 2000); 
+                
+                showToast("PDF downloaded successfully!");
+            } catch (error) {
+                showToast("Failed to generate PDF.");
+                console.error(error);
+            }
         }
 
         // Helper to wrap text on canvas
@@ -719,33 +838,27 @@
                 showToast("Please select a color and size to generate the specification image.");
                 return;
             }
-            
             showToast(`Generating specification image for ${currentProduct.title}...`);
             
-            // Create an off-screen canvas to draw our custom catalogue image
             const canvas = document.createElement('canvas');
             canvas.width = 1080;
-            canvas.height = 1350; // 4:5 ratio for excellent mobile sharing
+            canvas.height = 1350; 
             const ctx = canvas.getContext('2d');
             
             const img = new Image();
-            img.crossOrigin = "Anonymous"; // Allows canvas to export external images securely
-            // Append timestamp to prevent CORS cache issues
-            img.src = document.getElementById('pd-main-img').src + (document.getElementById('pd-main-img').src.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+            img.crossOrigin = "Anonymous";
+            img.src = document.getElementById('pd-main-img').src + '?t=' + new Date().getTime();
             
             img.onload = () => {
                 try {
-                    // Fill dark background
                     ctx.fillStyle = '#0a0a0a';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                    // Draw product image covering the top
                     const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
                     const x = (canvas.width - img.width * scale) / 2;
                     const y = (canvas.height - img.height * scale) / 2;
                     ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
                     
-                    // Draw a luxurious dark gradient overlay from the bottom up
                     const gradient = ctx.createLinearGradient(0, canvas.height - 700, 0, canvas.height);
                     gradient.addColorStop(0, 'rgba(10, 10, 10, 0)');
                     gradient.addColorStop(0.3, 'rgba(10, 10, 10, 0.85)');
@@ -753,33 +866,27 @@
                     ctx.fillStyle = gradient;
                     ctx.fillRect(0, canvas.height - 700, canvas.width, 700);
 
-                    // Top Left Brand Badge
                     ctx.fillStyle = 'rgba(10, 10, 10, 0.6)';
                     ctx.fillRect(40, 40, 240, 60);
                     ctx.fillStyle = '#ffffff';
                     ctx.font = '300 24px "Montserrat", sans-serif';
                     ctx.fillText('IVANTA', 60, 78);
                     
-                    // --- Text Overlays ---
-                    // Product Title
                     ctx.fillStyle = '#ffffff';
                     ctx.font = 'bold 56px "Playfair Display", serif';
                     ctx.fillText(currentProduct.title, 60, canvas.height - 420);
                     
-                    // Category & Price
-                    ctx.fillStyle = '#cda95e'; // brand-gold
+                    ctx.fillStyle = '#cda95e'; 
                     ctx.font = '500 28px "Inter", sans-serif';
                     ctx.fillText(`${currentProduct.category.toUpperCase()}  |  ${currentProduct.price}`, 60, canvas.height - 370);
                     
-                    // Specifications Box
-                    ctx.fillStyle = 'rgba(24, 24, 27, 0.9)'; // brand-surface
-                    ctx.strokeStyle = '#cda95e'; // brand-gold
+                    ctx.fillStyle = 'rgba(24, 24, 27, 0.9)'; 
+                    ctx.strokeStyle = '#cda95e'; 
                     ctx.lineWidth = 1;
                     ctx.fillRect(60, canvas.height - 320, canvas.width - 120, 110);
                     ctx.strokeRect(60, canvas.height - 320, canvas.width - 120, 110);
                     
-                    // Specs Details
-                    ctx.fillStyle = '#a1a1aa'; // zinc-400
+                    ctx.fillStyle = '#a1a1aa'; 
                     ctx.font = '400 22px "Inter", sans-serif';
                     ctx.fillText('SELECTED COLOR', 100, canvas.height - 275);
                     ctx.fillText('SELECTED SIZE', 500, canvas.height - 275);
@@ -789,17 +896,14 @@
                     ctx.fillText(selectedColor.toUpperCase(), 100, canvas.height - 240);
                     ctx.fillText(selectedSize, 500, canvas.height - 240);
                     
-                    // Product Description
-                    ctx.fillStyle = '#d4d4d8'; // zinc-300
+                    ctx.fillStyle = '#d4d4d8'; 
                     ctx.font = '300 24px "Inter", sans-serif';
                     wrapText(ctx, currentProduct.description, 60, canvas.height - 150, canvas.width - 120, 36);
                     
-                    // Brand Footer Note
-                    ctx.fillStyle = '#52525b'; // zinc-600
+                    ctx.fillStyle = '#52525b'; 
                     ctx.font = '500 18px "Inter", sans-serif';
                     ctx.fillText('HOUSE OF INDUS B2B RETAILER SPECIFICATION', 60, canvas.height - 50);
 
-                    // Trigger Download
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
                     const link = document.createElement('a');
                     link.href = dataUrl;
@@ -809,9 +913,7 @@
                     document.body.removeChild(link);
                     
                 } catch (e) {
-                    console.error("Canvas export error:", e);
                     showToast("Security settings prevented custom image. Downloading standard image...");
-                    // Fallback to basic download if browser blocks canvas export
                     const imgSrc = document.getElementById('pd-main-img').src;
                     const link = document.createElement('a');
                     link.href = imgSrc;
@@ -822,24 +924,64 @@
                     document.body.removeChild(link);
                 }
             };
-            
             img.onerror = () => {
-                showToast("Failed to load image for specification sheet. Try again.");
+                showToast("Failed to load image for specification sheet.");
             };
         }
 
-        window.shareWhatsApp = function() {
+        // Action: Share PDF Document to WhatsApp directly (Mobile) or download with instructions (Desktop)
+        window.shareWhatsApp = async function() {
             if (!currentProduct) return;
             
-            const text = `Explore the luxury B2B catalogue for the ${currentProduct.title} by IVANTA (House of Indus).\n\nAvailable for bulk Retail & Distributor orders.\n\nView details: ${window.location.href}`;
-            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+            showToast("Preparing PDF for sharing...");
             
-            window.open(whatsappUrl, '_blank');
+            try {
+                // 1. Generate the PDF Document & Extract Blob
+                const doc = await generatePDFDoc();
+                const blob = doc.output('blob');
+                const fileName = `IVANTA-${currentProduct.title.replace(/\s+/g, '-')}-Catalogue.pdf`;
+                
+                // 2. Create a File object
+                const file = new File([blob], fileName, { type: 'application/pdf' });
+                const shareData = {
+                    files: [file],
+                    title: `IVANTA Catalogue - ${currentProduct.title}`,
+                    text: `Hello, please find the B2B catalogue for the ${currentProduct.title} attached.`
+                };
+
+                // 3. Use Web Share API if supported
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    // Note: This opens the OS Share Sheet where the user selects WhatsApp.
+                    // Web browsers do not allow bypassing the share sheet to attach files directly to a specific app.
+                    showToast("Select WhatsApp from the share menu to send the catalogue.");
+                    await navigator.share(shareData);
+                } else {
+                    // Fallback for Desktop (cannot share files via URL parameters directly)
+                    showToast("Direct file attachment is unsupported on this browser. Downloading PDF for manual attachment...");
+                    
+                    // Force download
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    
+                    // Open WhatsApp Web with text explaining the catalogue
+                    setTimeout(() => {
+                        let text = `*IVANTA - House of Indus*\n_Luxury B2B Catalogue_\n\n*Product:* ${currentProduct.title}\n*Category:* ${currentProduct.category}\n*MSRP:* ${currentProduct.price}\n\n*I will attach the PDF catalogue momentarily.*`;
+                        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+                        window.open(whatsappUrl, '_blank');
+                    }, 2000);
+                }
+            } catch (err) {
+                console.error('Error sharing PDF:', err);
+                showToast("Share cancelled or failed.");
+            }
         }
 
         window.shareProduct = async function() {
             if (!currentProduct) return;
-            
             const shareData = {
                 title: `IVANTA - ${currentProduct.title}`,
                 text: `Explore the luxury B2B catalogue for the ${currentProduct.title} by IVANTA.`,
@@ -853,14 +995,12 @@
                     console.log('Error sharing:', err);
                 }
             } else {
-                // Fallback if browser doesn't support native sharing
                 navigator.clipboard.writeText(window.location.href).then(() => {
                     showToast("Product link copied to clipboard!");
                 });
             }
         }
 
-        // Initialize Shop Grid on load
         document.addEventListener('DOMContentLoaded', renderShopGrid);
 
     </script>
