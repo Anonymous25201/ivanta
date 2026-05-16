@@ -879,120 +879,186 @@
             canvas.height = 1350; // 4:5 ratio for excellent mobile sharing
             const ctx = canvas.getContext('2d');
             
-            // Helper function to load image via Promise for better async handling
-            const loadImg = (src) => new Promise((resolve) => {
+            // Helper function to load image safely and handle fallbacks
+            const loadImgSafe = (src) => new Promise((resolve) => {
                 const img = new Image();
                 img.crossOrigin = "Anonymous";
                 img.onload = () => resolve(img);
-                img.onerror = () => resolve(null);
+                img.onerror = () => {
+                    const fbImg = new Image();
+                    fbImg.onload = () => resolve(fbImg);
+                    fbImg.onerror = () => resolve(null);
+                    fbImg.src = src;
+                };
                 img.src = src + (src.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
             });
 
+            // Helper to test if drawing the image will taint the canvas (CORS issues on mobile)
+            const isSafeToDraw = (imgEl) => {
+                if (!imgEl) return false;
+                try {
+                    const tc = document.createElement('canvas');
+                    tc.width = 1; tc.height = 1;
+                    const tCtx = tc.getContext('2d');
+                    tCtx.drawImage(imgEl, 0, 0);
+                    tCtx.getImageData(0, 0, 1, 1);
+                    return true;
+                } catch(e) {
+                    return false;
+                }
+            };
+
             const imgSrc = document.getElementById('pd-main-img').src;
             const [img, logoImg] = await Promise.all([
-                loadImg(imgSrc),
-                loadImg('./House Of “Indus” (1).jpg')
+                loadImgSafe(imgSrc),
+                loadImgSafe('./House Of “Indus” (1).jpg')
             ]);
-            
-            if (!img) {
-                showToast("Failed to load image for specification sheet.");
-                return;
+
+            // Fill dark background
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Image boundaries and border radius
+            const imgW = 840;
+            const imgH = 600;
+            const imgX = (canvas.width - imgW) / 2;
+            const imgY = 160;
+            const radius = 20;
+
+            if (isSafeToDraw(img)) {
+                // Draw clipping path for rounded image
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(imgX + radius, imgY);
+                ctx.lineTo(imgX + imgW - radius, imgY);
+                ctx.quadraticCurveTo(imgX + imgW, imgY, imgX + imgW, imgY + radius);
+                ctx.lineTo(imgX + imgW, imgY + imgH - radius);
+                ctx.quadraticCurveTo(imgX + imgW, imgY + imgH, imgX + imgW - radius, imgY + imgH);
+                ctx.lineTo(imgX + radius, imgY + imgH);
+                ctx.quadraticCurveTo(imgX, imgY + imgH, imgX, imgY + imgH - radius);
+                ctx.lineTo(imgX, imgY + radius);
+                ctx.quadraticCurveTo(imgX, imgY, imgX + radius, imgY);
+                ctx.closePath();
+                ctx.clip();
+
+                // Object-cover sizing
+                const scale = Math.max(imgW / img.width, imgH / img.height);
+                const drawW = img.width * scale;
+                const drawH = img.height * scale;
+                const drawX = imgX + (imgW - drawW) / 2;
+                const drawY = imgY + (imgH - drawH) / 2;
+                ctx.drawImage(img, drawX, drawY, drawW, drawH);
+                ctx.restore();
+
+                // Gold Border Overlay
+                ctx.beginPath();
+                ctx.moveTo(imgX + radius, imgY);
+                ctx.lineTo(imgX + imgW - radius, imgY);
+                ctx.quadraticCurveTo(imgX + imgW, imgY, imgX + imgW, imgY + radius);
+                ctx.lineTo(imgX + imgW, imgY + imgH - radius);
+                ctx.quadraticCurveTo(imgX + imgW, imgY + imgH, imgX + imgW - radius, imgY + imgH);
+                ctx.lineTo(imgX + radius, imgY + imgH);
+                ctx.quadraticCurveTo(imgX, imgY + imgH, imgX, imgY + imgH - radius);
+                ctx.lineTo(imgX, imgY + radius);
+                ctx.quadraticCurveTo(imgX, imgY, imgX + radius, imgY);
+                ctx.closePath();
+                ctx.strokeStyle = '#cda95e';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            } else {
+                // Secure Placeholder Block (prevents taint and ensures text loads)
+                ctx.fillStyle = '#18181b';
+                ctx.beginPath();
+                ctx.moveTo(imgX + radius, imgY);
+                ctx.lineTo(imgX + imgW - radius, imgY);
+                ctx.quadraticCurveTo(imgX + imgW, imgY, imgX + imgW, imgY + radius);
+                ctx.lineTo(imgX + imgW, imgY + imgH - radius);
+                ctx.quadraticCurveTo(imgX + imgW, imgY + imgH, imgX + imgW - radius, imgY + imgH);
+                ctx.lineTo(imgX + radius, imgY + imgH);
+                ctx.quadraticCurveTo(imgX, imgY + imgH, imgX, imgY + imgH - radius);
+                ctx.lineTo(imgX, imgY + radius);
+                ctx.quadraticCurveTo(imgX, imgY, imgX + radius, imgY);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#cda95e';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = '#52525b';
+                ctx.font = '300 22px "Inter", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Image hidden due to browser security restrictions', imgX + (imgW/2), imgY + (imgH/2));
+                ctx.textAlign = 'left';
             }
 
+            // Draw Top Brand Badge (Using loaded Logo or Fallback Text)
+            if (isSafeToDraw(logoImg)) {
+                ctx.save();
+                // Composite mode removes the white background on canvas
+                ctx.globalCompositeOperation = 'screen';
+                ctx.filter = 'invert(1) contrast(1.2)';
+                ctx.drawImage(logoImg, imgX, 50, 100, 100);
+                ctx.restore();
+            } else {
+                ctx.fillStyle = 'rgba(24, 24, 27, 0.9)'; // brand-surface
+                ctx.fillRect(imgX, 60, 240, 60);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '300 24px "Montserrat", sans-serif';
+                ctx.fillText('IVANTA', imgX + 20, 98);
+            }
+            
+            // --- Text Overlays ---
+            // Product Title
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 56px "Playfair Display", serif';
+            ctx.fillText(currentProduct.title, imgX, canvas.height - 430);
+            
+            ctx.fillStyle = '#cda95e'; 
+            ctx.font = '500 28px "Inter", sans-serif';
+            ctx.fillText(`${currentProduct.category.toUpperCase()}  |  ${currentProduct.price}`, imgX, canvas.height - 380);
+            
+            ctx.fillStyle = 'rgba(24, 24, 27, 0.9)'; 
+            ctx.strokeStyle = '#cda95e'; 
+            ctx.lineWidth = 1;
+            ctx.fillRect(imgX, canvas.height - 330, imgW, 110);
+            ctx.strokeRect(imgX, canvas.height - 330, imgW, 110);
+            
+            ctx.fillStyle = '#a1a1aa'; 
+            ctx.font = '400 22px "Inter", sans-serif';
+            ctx.fillText('SELECTED COLOR', imgX + 40, canvas.height - 285);
+            ctx.fillText('SELECTED SIZE', imgX + 440, canvas.height - 285);
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '700 26px "Inter", sans-serif';
+            ctx.fillText(selectedColor.toUpperCase(), imgX + 40, canvas.height - 250);
+            ctx.fillText(selectedSize, imgX + 440, canvas.height - 250);
+            
+            ctx.fillStyle = '#d4d4d8'; 
+            ctx.font = '300 24px "Inter", sans-serif';
+            wrapText(ctx, currentProduct.description, imgX, canvas.height - 160, imgW, 36);
+            
+            ctx.fillStyle = '#52525b'; 
+            ctx.font = '500 18px "Inter", sans-serif';
+            ctx.fillText('HOUSE OF INDUS B2B RETAILER SPECIFICATION', imgX, canvas.height - 50);
+
+            // Use toBlob for stable mobile sharing and downloading
             try {
-                // Fill dark background
-                ctx.fillStyle = '#0a0a0a';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Image boundaries and border radius
-                    const imgW = 840;
-                    const imgH = 600;
-                    const imgX = (canvas.width - imgW) / 2;
-                    const imgY = 160;
-                    const radius = 20;
-
-                    // Draw clipping path for rounded image
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(imgX + radius, imgY);
-                    ctx.lineTo(imgX + imgW - radius, imgY);
-                    ctx.quadraticCurveTo(imgX + imgW, imgY, imgX + imgW, imgY + radius);
-                    ctx.lineTo(imgX + imgW, imgY + imgH - radius);
-                    ctx.quadraticCurveTo(imgX + imgW, imgY + imgH, imgX + imgW - radius, imgY + imgH);
-                    ctx.lineTo(imgX + radius, imgY + imgH);
-                    ctx.quadraticCurveTo(imgX, imgY + imgH, imgX, imgY + imgH - radius);
-                    ctx.lineTo(imgX, imgY + radius);
-                    ctx.quadraticCurveTo(imgX, imgY, imgX + radius, imgY);
-                    ctx.closePath();
-                ctx.stroke();
-
-                // Draw Top Brand Badge (Using loaded Logo or Fallback Text)
-                if (logoImg) {
-                    ctx.save();
-                    // Composite mode removes the white background on canvas
-                    ctx.globalCompositeOperation = 'screen';
-                    ctx.filter = 'invert(1) contrast(1.2)';
-                    ctx.drawImage(logoImg, imgX, 50, 100, 100);
-                    ctx.restore();
-                } else {
-                    ctx.fillStyle = 'rgba(24, 24, 27, 0.9)'; // brand-surface
-                    ctx.fillRect(imgX, 60, 240, 60);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = '300 24px "Montserrat", sans-serif';
-                    ctx.fillText('IVANTA', imgX + 20, 98);
-                }
-                
-                // --- Text Overlays ---
-                // Product Title
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 56px "Playfair Display", serif';
-                    ctx.fillText(currentProduct.title, imgX, canvas.height - 430);
-                    
-                    ctx.fillStyle = '#cda95e'; 
-                    ctx.font = '500 28px "Inter", sans-serif';
-                    ctx.fillText(`${currentProduct.category.toUpperCase()}  |  ${currentProduct.price}`, imgX, canvas.height - 380);
-                    
-                    ctx.fillStyle = 'rgba(24, 24, 27, 0.9)'; 
-                    ctx.strokeStyle = '#cda95e'; 
-                    ctx.lineWidth = 1;
-                    ctx.fillRect(imgX, canvas.height - 330, imgW, 110);
-                    ctx.strokeRect(imgX, canvas.height - 330, imgW, 110);
-                    
-                    ctx.fillStyle = '#a1a1aa'; 
-                    ctx.font = '400 22px "Inter", sans-serif';
-                    ctx.fillText('SELECTED COLOR', imgX + 40, canvas.height - 285);
-                    ctx.fillText('SELECTED SIZE', imgX + 440, canvas.height - 285);
-                    
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = '700 26px "Inter", sans-serif';
-                    ctx.fillText(selectedColor.toUpperCase(), imgX + 40, canvas.height - 250);
-                    ctx.fillText(selectedSize, imgX + 440, canvas.height - 250);
-                    
-                    ctx.fillStyle = '#d4d4d8'; 
-                    ctx.font = '300 24px "Inter", sans-serif';
-                    wrapText(ctx, currentProduct.description, imgX, canvas.height - 160, imgW, 36);
-                    
-                    ctx.fillStyle = '#52525b'; 
-                    ctx.font = '500 18px "Inter", sans-serif';
-                    ctx.fillText('HOUSE OF INDUS B2B RETAILER SPECIFICATION', imgX, canvas.height - 50);
-
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                canvas.toBlob((blob) => {
+                    if(!blob) throw new Error("Blob Generation Failed");
+                    const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
-                    link.href = dataUrl;
+                    link.href = url;
                     link.download = `IVANTA-${currentProduct.title.replace(/\s+/g, '-').toUpperCase()}-${selectedColor.replace(/\s+/g, '-')}-SZ${selectedSize}.jpg`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Critical for mobile iOS: delay revocation
+                    setTimeout(() => URL.revokeObjectURL(url), 2000);
+                }, 'image/jpeg', 0.95);
             } catch (e) {
-                showToast("Security settings prevented custom image. Downloading standard image...");
-                const link = document.createElement('a');
-                link.href = img.src;
-                link.download = `IVANTA-${currentProduct.title.replace(/\s+/g, '-').toUpperCase()}-IMAGE.jpg`;
-                link.target = "_blank";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                showToast("Spec image generation failed completely.");
+                console.error(e);
             }
         }
 
