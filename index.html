@@ -43,7 +43,7 @@
     <!-- Internal CSS for Page Transitions & Custom Styling -->
     <style>
         /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #0a0a0a; }
         ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #52525b; }
@@ -57,6 +57,19 @@
         .img-zoom-hover { overflow: hidden; }
         .img-zoom-hover img { transition: transform 0.7s ease; }
         .img-zoom-hover:hover img { transform: scale(1.05); }
+
+        /* Interactive Product Zoom */
+        .product-zoom-container {
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        .product-zoom-img {
+            transition: transform 0.3s ease-out;
+            transform-origin: center center;
+        }
+        .product-zoom-container:hover .product-zoom-img {
+            transform: scale(2.2); /* 2.2x Magnification */
+        }
 
         /* Form Inputs */
         input, select, textarea {
@@ -93,9 +106,60 @@
             color: theme('colors.brand.gold');
             border-bottom: 1px solid theme('colors.brand.gold');
         }
+
+        /* --- PRELOADER STYLES START --- */
+        body.preloader-active { 
+            overflow: hidden; /* Prevent scrolling while preloader is active */
+        }
+
+        .preloader-ivanta {
+            transform: translateY(100%);
+            opacity: 0;
+            animation: slideUpFade 1.2s cubic-bezier(0.77, 0, 0.175, 1) 0.2s forwards;
+        }
+
+        .preloader-line {
+            width: 180px;
+            max-width: 80vw;
+            transform: scaleX(0);
+            transform-origin: center;
+            animation: scaleXIn 0.8s cubic-bezier(0.77, 0, 0.175, 1) 1s forwards;
+        }
+
+        .preloader-indus {
+            transform: translateY(100%);
+            opacity: 0;
+            animation: slideUpFade 1s cubic-bezier(0.77, 0, 0.175, 1) 1.3s forwards;
+        }
+
+        .preloader-exit-up {
+            transform: translateY(-100%);
+            pointer-events: none;
+        }
+
+        @keyframes slideUpFade {
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes scaleXIn {
+            to { transform: scaleX(1); }
+        }
+        /* --- PRELOADER STYLES END --- */
     </style>
 </head>
-<body class="bg-brand-dark text-brand-light font-sans antialiased selection:bg-brand-gold selection:text-brand-dark flex flex-col min-h-screen">
+<body class="bg-brand-dark text-brand-light font-sans antialiased selection:bg-brand-gold selection:text-brand-dark flex flex-col min-h-screen preloader-active">
+
+    <!-- --- PRELOADER HTML START --- -->
+    <div id="ivanta-preloader" class="fixed inset-0 z-[9999] bg-brand-dark flex flex-col items-center justify-center transition-transform duration-1000 ease-[cubic-bezier(0.77,0,0.175,1)]">
+        <div class="overflow-hidden pb-1">
+            <h1 class="preloader-ivanta font-logo text-5xl sm:text-7xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]">IVANTA</h1>
+        </div>
+        <div class="preloader-line h-[1px] bg-brand-gold mt-6 mb-4"></div>
+        <div class="overflow-hidden pt-1">
+            <span class="preloader-indus font-sans text-xs sm:text-sm font-semibold tracking-[0.35em] text-zinc-400 uppercase">House Of "Indus"</span>
+        </div>
+    </div>
+    <!-- --- PRELOADER HTML END --- -->
 
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
@@ -163,7 +227,7 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="relative aspect-[4/3] img-zoom-hover group cursor-pointer border border-brand-border" onclick="navigate('shop')">
-                            <img src="IV-202 TAN.jpg" alt="Loafers" class="w-full h-full object-cover opacity-70 group-hover:opacity-100">
+                            <img src="https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80" alt="Loafers" class="w-full h-full object-cover opacity-70 group-hover:opacity-100">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-10">
                                 <div>
                                     <h3 class="font-serif text-3xl text-white mb-2">Signature Loafers</h3>
@@ -172,7 +236,7 @@
                             </div>
                         </div>
                         <div class="relative aspect-[4/3] img-zoom-hover group cursor-pointer border border-brand-border" onclick="navigate('shop')">
-                            <img src="boot2.jpeg" alt="Heel Boots" class="w-full h-full object-cover opacity-70 group-hover:opacity-100">
+                            <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80" alt="Heel Boots" class="w-full h-full object-cover opacity-70 group-hover:opacity-100">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-10">
                                 <div>
                                     <h3 class="font-serif text-3xl text-white mb-2">Architectural Heel Boots</h3>
@@ -210,10 +274,20 @@
                 </button>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
-                    <!-- Images -->
+                    <!-- Multi-Angle Image Gallery & Interactive Zoom -->
                     <div class="flex flex-col gap-4">
-                        <div class="aspect-[4/5] bg-zinc-900 border border-brand-border relative group overflow-hidden">
-                            <img id="pd-main-img" src="" alt="Product" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80'">
+                        <!-- Main Interactive Image -->
+                        <div class="aspect-[4/5] bg-zinc-900 border border-brand-border relative group product-zoom-container" onmousemove="zoomPanImage(event)">
+                            <!-- Hint overlay on hover -->
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10 hidden sm:flex items-center justify-center">
+                                <span class="bg-black/80 text-white text-xs px-3 py-1.5 rounded uppercase tracking-widest backdrop-blur-sm border border-zinc-700">Hover to Zoom & Pan</span>
+                            </div>
+                            <img id="pd-main-img" src="" alt="Product" class="product-zoom-img w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80'">
+                        </div>
+
+                        <!-- Thumbnail Strip -->
+                        <div id="pd-gallery" class="flex gap-3 overflow-x-auto pb-2">
+                            <!-- Thumbnails injected via JS -->
                         </div>
                     </div>
                     
@@ -283,9 +357,14 @@
         <div id="view-about" class="page-view py-12">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                    <div>
-                        <img src="https://images.unsplash.com/photo-1588665790408-05187e14fb61?auto=format&fit=crop&w=1000&q=80" alt="Craftsmanship" class="w-full rounded-sm border border-brand-border shadow-2xl">
+                    
+                    <!-- Replaced Photo with Indus Logo Container -->
+                    <div class="flex items-center justify-center p-12 bg-zinc-900/50 border border-brand-border rounded-sm relative overflow-hidden group min-h-[300px]">
+                        <!-- Subtle gold glow effect on hover -->
+                        <div class="absolute inset-0 bg-brand-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <img src="./indus-logo (1).png" alt="Indus Footwear Logo" class="w-full max-w-xs sm:max-w-sm object-contain filter invert contrast-[1.2] mix-blend-lighten opacity-70 group-hover:opacity-100 transition-opacity duration-500" onerror="this.onerror=null; this.outerHTML='<div class=&quot;text-center&quot;><span class=&quot;font-sans text-2xl font-semibold tracking-wider text-white uppercase&quot;>INDUS FOOTWEAR</span><div class=&quot;w-16 h-[1px] bg-brand-gold mx-auto mt-4&quot;></div></div>';">
                     </div>
+                    
                     <div>
                         <svg class="w-10 h-10 text-brand-gold mb-6 opacity-80" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13h-13L12 6.5z"/>
@@ -298,7 +377,7 @@
                                 IVANTA is the exclusive luxury sub-brand of <strong>Indus Footwear</strong>, a renowned name with over 25 years of established heritage in exceptional shoemaking.
                             </p>
                             <p>
-                                While Indus Footwear has built a decades-long legacy of trust and quality, IVANTA was born with a highly specialized focus: to master the art of premium handcrafted loafers and architectural boots. We source only the finest full-grain leathers and premium suedes to ensure each pair is flawless.
+                                While Indus Footwear has built a decades-long legacy of trust and quality, IVANTA was launched just a year ago with a highly specialized focus: to master the art of premium handcrafted loafers and architectural boots. We source only the finest full-grain leathers and premium suedes to ensure each pair is flawless.
                             </p>
                             <p>
                                 We believe that true luxury lies in the details—from the precision of our stitching to the structural balance of our heels. IVANTA is more than footwear; it is the modern pinnacle of the 25-year Indus legacy.
@@ -361,9 +440,13 @@
                         <div>
                             <h3 class="font-serif text-2xl text-white mb-6">Headquarters</h3>
                             <p class="text-zinc-400 font-light leading-relaxed">
-                                Indus Footwear (Parent Company)<br>
-                                Heritage Building, Level 4<br>
-                                New Delhi, India 110001
+                                
+                                    <h3>Indus Footprints Limited (INDUS FOOTWEAR - Parent Company)</h3><br>
+
+                                    <a href="https://maps.app.goo.gl/3srbyJ7GvyJ4vUXN6" target="_blank" rel="noopener noreferrer" class="hover:text-brand-gold transition-colors duration-300">
+                                    Khasra no 3851, near RIICO industrial Area, Khairthal<br>
+                                    Rajasthan 301404
+                                </a>
                             </p>
                         </div>
                         
@@ -372,11 +455,11 @@
                             <div class="space-y-4 text-zinc-400 font-light">
                                 <p class="flex items-center gap-4">
                                     <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                                    concierge@ivanta.com
+                                    <a href="mailto:ivanta@indusfootwear.com" class="hover:text-brand-gold transition-colors duration-300">ivanta@indusfootwear.com</a>
                                 </p>
                                 <p class="flex items-center gap-4">
                                     <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                                    +91 99999 99999
+                                    <a href="tel:+919251954760" class="hover:text-brand-gold transition-colors duration-300">+91 9251954762</a>
                                 </p>
                             </div>
                         </div>
@@ -384,8 +467,8 @@
                         <div>
                             <h3 class="font-serif text-2xl text-white mb-6">Business Hours</h3>
                             <p class="text-zinc-400 font-light leading-relaxed">
-                                Monday - Friday: 10:00 AM - 7:00 PM (IST)<br>
-                                Saturday & Sunday: Closed
+                            Monday - Friday: 10:00 AM - 7:00 PM (IST)<br>
+                            Sunday: Closed
                             </p>
                         </div>
                     </div>
@@ -421,6 +504,22 @@
 
 
     <script>
+        // --- PRELOADER EXIT SEQUENCE START ---
+        // Run the timer immediately to ensure it never gets stuck waiting on large images
+        setTimeout(() => {
+            const preloader = document.getElementById('ivanta-preloader');
+            if (preloader) {
+                preloader.classList.add('preloader-exit-up');
+                document.body.classList.remove('preloader-active'); // Re-enable scrolling
+                
+                // Remove element from DOM after exit animation completes
+                setTimeout(() => {
+                    preloader.remove();
+                }, 1000);
+            }
+        }, 2600); // Trigger exit at 2.6 seconds
+        // --- PRELOADER EXIT SEQUENCE END ---
+
         // Custom Toast Notification System
         window.showToast = function(message) {
             const container = document.getElementById('toast-container');
@@ -468,6 +567,35 @@
             e.target.reset();
         }
 
+        // Interactive Zoom Pan Logic
+        window.zoomPanImage = function(e) {
+            const container = e.currentTarget;
+            const img = container.querySelector('.product-zoom-img');
+            const { left, top, width, height } = container.getBoundingClientRect();
+            
+            // Calculate mouse position percentage
+            const x = ((e.clientX - left) / width) * 100;
+            const y = ((e.clientY - top) / height) * 100;
+            
+            // Adjust the transform origin to pan around the image smoothly
+            img.style.transformOrigin = `${x}% ${y}%`;
+        }
+
+        // Generic Angles array for the mock gallery to demonstrate different angles
+        const genericLoaferAngles = [
+            'https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80', // Side/Main
+            'https://images.unsplash.com/photo-1614252209825-9c944f332aa6?auto=format&fit=crop&w=800&q=80', // Top/Front
+            'https://images.unsplash.com/photo-1533827432537-70133748f5c8?auto=format&fit=crop&w=800&q=80', // Detail/Texture
+            'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80'  // Lifestyle/On Foot
+        ];
+
+        const genericBootAngles = [
+            'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80', // Side/Main
+            'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80', // Angle
+            'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&w=800&q=80', // Back/Heel Detail
+            'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=800&q=80'  // Top Down
+        ];
+
         const productsDB = [
             {
                 id: 'loaf-1',
@@ -476,6 +604,7 @@
                 category: 'Loafers',
                 description: 'Handcrafted from premium full-grain Italian leather, delivering a distinguished look for formal and smart-casual attire. The timeless design ensures versatility across your wardrobe.',
                 image: './IV-103 BLACK.jpg', 
+                gallery: genericLoaferAngles,
                 colors: [
                     { name: 'Obsidian Black', hex: '#000000', image: './IV-103 BLACK.jpg' },
                     { name: 'Midnight Blue', hex: '#191970', image: './IV-103 BROWN.jpg' }
@@ -488,6 +617,7 @@
                 category: 'Loafers',
                 description: 'Burnished leather finish offers a deep, rich patina that develops character with every step you take. Expertly stitched for durability and comfort.',
                 image: 'IV-103 BROWN.jpg',
+                gallery: genericLoaferAngles,
                 colors: [
                     { name: 'Cognac Brown', hex: '#5C4033', image: './IV-103 BROWN.jpg' },
                     { name: 'Mahogany', hex: '#4A0404', image: './IV-202 TAN.jpg' },
@@ -501,6 +631,7 @@
                 category: 'Loafers',
                 description: 'A lighter, versatile shade perfect for summer suiting and elevated weekend casual wear. Constructed with a flexible sole for all-day comfort.',
                 image: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8?auto=format&fit=crop&w=800&q=80',
+                gallery: genericLoaferAngles,
                 colors: [
                     { name: 'Desert Tan', hex: '#D2B48C', image: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8?auto=format&fit=crop&w=800&q=80' },
                     { name: 'Cognac Brown', hex: '#5C4033', image: 'https://images.unsplash.com/photo-1614252209825-9c944f332aa6?auto=format&fit=crop&w=800&q=80' }
@@ -513,6 +644,7 @@
                 category: 'Heel Boots',
                 description: 'Architectural lines meet supreme comfort. Featuring a 2.5-inch block heel, premium leather construction, and a subtle side zipper for easy wear.',
                 image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80',
+                gallery: genericBootAngles,
                 colors: [
                     { name: 'Midnight Black', hex: '#000000', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80' },
                     { name: 'Dark Chestnut', hex: '#3B2F2F', image: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80' }
@@ -525,6 +657,7 @@
                 category: 'Heel Boots',
                 description: 'Crafted from water-resistant calf suede, this elevated Chelsea style features elastic side panels for a flawless, glove-like fit.',
                 image: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80',
+                gallery: genericBootAngles,
                 colors: [
                     { name: 'Chestnut Suede', hex: '#8B5A2B', image: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80' },
                     { name: 'Charcoal Suede', hex: '#36454F', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80' },
@@ -566,12 +699,34 @@
             `).join('');
         }
 
+        window.selectGalleryImage = function(src, btnElement) {
+            // Update Main Image
+            document.getElementById('pd-main-img').src = src;
+            
+            // Update Active Border on Gallery Thumbnails
+            document.querySelectorAll('.gallery-thumb').forEach(el => {
+                el.classList.remove('border-brand-gold');
+                el.classList.add('border-zinc-800');
+            });
+            if(btnElement) {
+                btnElement.classList.remove('border-zinc-800');
+                btnElement.classList.add('border-brand-gold');
+            }
+            
+            // Reset zoom origin when swapping images
+            const img = document.getElementById('pd-main-img');
+            img.style.transformOrigin = 'center center';
+        }
+
         window.selectColor = function(colorName, btnElement, imageUrl) {
             selectedColor = colorName;
             document.getElementById('pd-color-name').textContent = colorName;
+            
             if (imageUrl) {
-                document.getElementById('pd-main-img').src = imageUrl;
+                // When color changes, set it as the main image
+                selectGalleryImage(imageUrl, null); // passing null resets all thumbnail borders
             }
+            
             document.querySelectorAll('.color-btn').forEach(b => {
                 b.classList.remove('ring-2', 'ring-brand-gold', 'ring-offset-2', 'ring-offset-brand-surface', 'scale-110');
             });
@@ -596,12 +751,31 @@
             selectedColor = null;
             selectedSize = null;
 
-            document.getElementById('pd-main-img').src = p.image;
+            // Ensure the main image defaults correctly
+            const mainImgElement = document.getElementById('pd-main-img');
+            mainImgElement.src = p.image;
+            mainImgElement.style.transformOrigin = 'center center'; // Reset pan
+
             document.getElementById('pd-category').textContent = p.category;
             document.getElementById('pd-title').textContent = p.title;
             document.getElementById('pd-price').textContent = p.price;
             document.getElementById('pd-description').textContent = p.description;
             document.getElementById('pd-color-name').textContent = 'Select a color';
+
+            // Inject Multiple Angle Thumbnails
+            if (p.gallery && p.gallery.length > 0) {
+                // Make the main product image the first in the gallery dynamically
+                const completeGallery = [p.image, ...p.gallery.filter(g => g !== p.image)];
+                
+                const galleryHtml = completeGallery.map((imgSrc, index) => `
+                    <button onclick="selectGalleryImage('${imgSrc}', this)" class="gallery-thumb flex-shrink-0 w-20 h-24 sm:w-24 sm:h-32 bg-zinc-900 border ${index === 0 ? 'border-brand-gold' : 'border-zinc-800'} hover:border-brand-gold transition-colors overflow-hidden">
+                        <img src="${imgSrc}" class="w-full h-full object-cover" alt="Angle ${index + 1}" onerror="this.src='https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=200&q=80'">
+                    </button>
+                `).join('');
+                document.getElementById('pd-gallery').innerHTML = galleryHtml;
+            } else {
+                document.getElementById('pd-gallery').innerHTML = ''; // Clear if none
+            }
 
             const colorsHtml = p.colors.map(c => `
                 <button onclick="selectColor('${c.name}', this, '${c.image}')" class="color-btn w-10 h-10 rounded-full border border-zinc-600 transition-all focus:outline-none shadow-sm hover:scale-110" style="background-color: ${c.hex}" title="${c.name}"></button>
@@ -763,7 +937,7 @@
             doc.setTextColor(181, 147, 78); // darker gold for print contrast
             // jsPDF default fonts don't support the ₹ symbol, so we convert it to Rs. to prevent layout issues
             const pdfPrice = currentProduct.price.replace('₹', 'Rs. ');
-            doc.text(`MSRP: ${pdfPrice}`, 20, 85);
+            doc.text(`${pdfPrice}`, 20, 85);
 
             let yPos = 100;
             
@@ -1165,7 +1339,7 @@
                 url: window.location.href
             };
 
-            if (navigator.share) {
+            if (navigator.share) {  
                 try {
                     await navigator.share(shareData);
                 } catch (err) {
