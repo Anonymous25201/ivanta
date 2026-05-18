@@ -126,7 +126,7 @@
             animation: scaleXIn 0.8s cubic-bezier(0.77, 0, 0.175, 1) 1s forwards;
         }
 
-        .preloader- {
+        .preloader-indus {
             transform: translateY(100%);
             opacity: 0;
             animation: slideUpFade 1s cubic-bezier(0.77, 0, 0.175, 1) 1.3s forwards;
@@ -156,7 +156,7 @@
         </div>
         <div class="preloader-line h-[1px] bg-brand-gold mt-6 mb-4"></div>
         <div class="overflow-hidden pt-1">
-            <span class="preloader- font-sans text-xs sm:text-sm font-semibold tracking-[0.35em] text-zinc-400 uppercase">House Of ""</span>
+            <span class="preloader-indus font-sans text-xs sm:text-sm font-semibold tracking-[0.35em] text-zinc-400 uppercase">House Of "Indus"</span>
         </div>
     </div>
     <!-- --- PRELOADER HTML END --- -->
@@ -362,7 +362,7 @@
                     <div class="flex items-center justify-center p-12 bg-zinc-900/50 border border-brand-border rounded-sm relative overflow-hidden group min-h-[300px]">
                         <!-- Subtle gold glow effect on hover -->
                         <div class="absolute inset-0 bg-brand-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <img src="./indus-logo1.png" alt="Indus Footwear Logo" class="w-full max-w-xs sm:max-w-sm object-contain filter invert contrast-[1.2] mix-blend-lighten opacity-70 group-hover:opacity-100 transition-opacity duration-500" onerror="this.onerror=null; this.outerHTML='<div class=&quot;text-center&quot;><span class=&quot;font-sans text-2xl font-semibold tracking-wider text-white uppercase&quot;>INDUS FOOTWEAR</span><div class=&quot;w-16 h-[1px] bg-brand-gold mx-auto mt-4&quot;></div></div>';">
+                        <img src="./indus-logo (1).png" alt="Indus Footwear Logo" class="w-full max-w-xs sm:max-w-sm object-contain filter invert contrast-[1.2] mix-blend-lighten opacity-70 group-hover:opacity-100 transition-opacity duration-500" onerror="this.onerror=null; this.outerHTML='<div class=&quot;text-center&quot;><span class=&quot;font-sans text-2xl font-semibold tracking-wider text-white uppercase&quot;>INDUS FOOTWEAR</span><div class=&quot;w-16 h-[1px] bg-brand-gold mx-auto mt-4&quot;></div></div>';">
                     </div>
                     
                     <div>
@@ -440,10 +440,8 @@
                         <div>
                             <h3 class="font-serif text-2xl text-white mb-6">Headquarters</h3>
                             <p class="text-zinc-400 font-light leading-relaxed">
-                                
-                                    <h3>Indus Footprints Limited (INDUS FOOTWEAR - Parent Company)</h3><br>
-
-                                    <a href="https://maps.app.goo.gl/3srbyJ7GvyJ4vUXN6" target="_blank" rel="noopener noreferrer" class="hover:text-brand-gold transition-colors duration-300">
+                                <a href="https://maps.app.goo.gl/3srbyJ7GvyJ4vUXN6" target="_blank" rel="noopener noreferrer" class="hover:text-brand-gold transition-colors duration-300">
+                                    Indus Footprints Limited (INDUS FOOTWEAR - Parent Company)<br>
                                     Khasra no 3851, near RIICO industrial Area, Khairthal<br>
                                     Rajasthan 301404
                                 </a>
@@ -467,8 +465,8 @@
                         <div>
                             <h3 class="font-serif text-2xl text-white mb-6">Business Hours</h3>
                             <p class="text-zinc-400 font-light leading-relaxed">
-                            Monday - Friday: 10:00 AM - 7:00 PM (IST)<br>
-                            Sunday: Closed
+                                Monday - Friday: 10:00 AM - 7:00 PM (IST)<br>
+                                Saturday & Sunday: Closed
                             </p>
                         </div>
                     </div>
@@ -490,14 +488,15 @@
                 </div>
                 
                 <div class="flex gap-6">
-                    <a href="#" class="text-zinc-500 hover:text-brand-gold transition-colors">Instagram</a>
-                    <a href="#" class="text-zinc-500 hover:text-brand-gold transition-colors">Facebook</a>
-                    <a href="#" class="text-zinc-500 hover:text-brand-gold transition-colors">Pinterest</a>
+                    <a href="https://instagram.com/ivanta.co" target="_blank" rel="noopener noreferrer" class="text-zinc-500 hover:text-brand-gold transition-colors">Instagram</a>
+                    <a href="https://www.facebook.com/people/Ivanta/61589058824986/" target="_blank" rel="noopener noreferrer" class="text-zinc-500 hover:text-brand-gold transition-colors">Facebook</a>
                 </div>
             </div>
             
-            <div class="text-center border-t border-zinc-900 pt-8 text-zinc-700 text-xs tracking-wider uppercase">
-                <p>&copy; 2026 IVANTA. All rights reserved.</p>
+            <div class="text-center border-t border-zinc-900 pt-8 text-zinc-700 text-xs tracking-wider uppercase space-y-3">
+                <p class="text-brand-gold"><b>Ivanta</b></p> <p>From The House Of "Indus Footwear"</p>
+                <p>&copy; 2026 Indus footprints limited. All rights reserved.</p>
+                <p class="text-[10px] text-zinc-600 normal-case tracking-normal">Designed and maintained by IT Operations Team of <a href="https://indusfootwear.com" target="_blank" rel="noopener noreferrer" class="text-brand-gold hover:underline">Indus Footwear</a></p>
             </div>
         </div>
     </footer>
@@ -937,7 +936,7 @@
             doc.setTextColor(181, 147, 78); // darker gold for print contrast
             // jsPDF default fonts don't support the ₹ symbol, so we convert it to Rs. to prevent layout issues
             const pdfPrice = currentProduct.price.replace('₹', 'Rs. ');
-            doc.text(`${pdfPrice}`, 20, 85);
+            doc.text(`MSRP: ${pdfPrice}`, 20, 85);
 
             let yPos = 100;
             
