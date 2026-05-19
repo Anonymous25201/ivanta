@@ -59,16 +59,18 @@
         .img-zoom-hover:hover img { transform: scale(1.05); }
 
         /* Interactive Product Zoom */
-        .product-zoom-container {
+        .zoom-wrapper {
             overflow: hidden;
-            cursor: crosshair;
+            position: relative;
         }
-        .product-zoom-img {
+        .zoom-image {
             transition: transform 0.3s ease-out;
-            transform-origin: center center;
+            transform-origin: center;
+            will-change: transform;
+            cursor: grab;
         }
-        .product-zoom-container:hover .product-zoom-img {
-            transform: scale(2.2); /* 2.2x Magnification */
+        .zoom-image:active {
+            cursor: grabbing;
         }
 
         /* Form Inputs */
@@ -226,22 +228,18 @@
             <section class="py-24 bg-brand-surface">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="relative aspect-[4/3] img-zoom-hover group cursor-pointer border border-brand-border" onclick="navigate('shop')">
-                            <img src="./IV-202 TAN.jpg" alt="Loafers" class="w-full h-full object-cover opacity-70 group-hover:opacity-100">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-10">
-                                <div>
-                                    <h3 class="font-serif text-3xl text-white mb-2">Signature Loafers</h3>
-                                    <p class="text-brand-gold text-sm tracking-widest uppercase flex items-center gap-2">Discover <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg></p>
-                                </div>
+                        <div class="relative aspect-[4/3] img-zoom-hover group cursor-pointer border border-brand-border bg-white rounded-sm overflow-hidden" onclick="navigate('shop')">
+                            <img src="./IV-202 TAN.jpg" alt="Loafers" class="w-full h-full object-contain p-8 mix-blend-multiply">
+                            <div class="absolute bottom-0 left-0 right-0 p-8 flex flex-col items-center justify-end bg-gradient-to-t from-white via-white/90 to-transparent">
+                                <h3 class="font-serif text-2xl sm:text-3xl text-brand-dark mb-2 font-bold text-center">Signature Loafers</h3>
+                                <p class="text-brand-goldHover text-sm tracking-widest uppercase flex items-center gap-2 font-medium">Discover <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg></p>
                             </div>
                         </div>
-                        <div class="relative aspect-[4/3] img-zoom-hover group cursor-pointer border border-brand-border" onclick="navigate('shop')">
-                            <img src="./boot2.jpeg" alt="Heel Boots" class="w-full h-full object-cover opacity-70 group-hover:opacity-100">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-10">
-                                <div>
-                                    <h3 class="font-serif text-3xl text-white mb-2">Architectural Heel Boots</h3>
-                                    <p class="text-brand-gold text-sm tracking-widest uppercase flex items-center gap-2">Discover <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg></p>
-                                </div>
+                        <div class="relative aspect-[4/3] img-zoom-hover group cursor-pointer border border-brand-border bg-white rounded-sm overflow-hidden" onclick="navigate('shop')">
+                            <img src="./boot2.jpeg" alt="Heel Boots" class="w-full h-full object-contain p-8 mix-blend-multiply">
+                            <div class="absolute bottom-0 left-0 right-0 p-8 flex flex-col items-center justify-end bg-gradient-to-t from-white via-white/90 to-transparent">
+                                <h3 class="font-serif text-2xl sm:text-3xl text-brand-dark mb-2 font-bold text-center">Architectural Heel Boots</h3>
+                                <p class="text-brand-goldHover text-sm tracking-widest uppercase flex items-center gap-2 font-medium">Discover <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg></p>
                             </div>
                         </div>
                     </div>
@@ -277,12 +275,22 @@
                     <!-- Multi-Angle Image Gallery & Interactive Zoom -->
                     <div class="flex flex-col gap-4">
                         <!-- Main Interactive Image -->
-                        <div class="aspect-[4/5] bg-zinc-900 border border-brand-border relative group product-zoom-container" onmousemove="zoomPanImage(event)">
-                            <!-- Hint overlay on hover -->
-                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10 hidden sm:flex items-center justify-center">
-                                <span class="bg-black/80 text-white text-xs px-3 py-1.5 rounded uppercase tracking-widest backdrop-blur-sm border border-zinc-700">Hover to Zoom & Pan</span>
+                        <div id="pd-zoom-container" class="aspect-[4/5] bg-white border border-brand-border relative group zoom-wrapper rounded-sm">
+                            <div class="absolute top-4 left-4 z-20">
+                                <span class="bg-brand-dark text-white text-[10px] px-3 py-1.5 uppercase tracking-widest shadow-lg rounded-sm" id="pd-badge"></span>
                             </div>
-                            <img id="pd-main-img" src="" alt="Product" class="product-zoom-img w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80'">
+                            
+                            <!-- Zoom Controls (+ / -) -->
+                            <div class="absolute bottom-4 right-4 flex flex-col gap-2 z-20">
+                                <button onclick="changeZoom(0.5)" class="w-10 h-10 bg-brand-dark border border-brand-border text-brand-gold rounded flex items-center justify-center hover:bg-brand-gold hover:text-brand-dark transition shadow-xl" aria-label="Zoom In">
+                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                </button>
+                                <button onclick="changeZoom(-0.5)" class="w-10 h-10 bg-brand-dark border border-brand-border text-brand-gold rounded flex items-center justify-center hover:bg-brand-gold hover:text-brand-dark transition shadow-xl" aria-label="Zoom Out">
+                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                                </button>
+                            </div>
+    
+                            <img id="pd-main-img" src="" alt="Product" class="zoom-image w-full h-full object-contain p-8 mix-blend-multiply" onerror="this.src='https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80'">
                         </div>
 
                         <!-- Thumbnail Strip -->
@@ -362,7 +370,7 @@
                     <div class="flex items-center justify-center p-12 bg-zinc-900/50 border border-brand-border rounded-sm relative overflow-hidden group min-h-[300px]">
                         <!-- Subtle gold glow effect on hover -->
                         <div class="absolute inset-0 bg-brand-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <img src="./indus-logo1.png" alt="Indus Footwear Logo" class="w-full max-w-xs sm:max-w-sm object-contain filter invert contrast-[1.2] mix-blend-lighten opacity-70 group-hover:opacity-100 transition-opacity duration-500" onerror="this.onerror=null; this.outerHTML='<div class=&quot;text-center&quot;><span class=&quot;font-sans text-2xl font-semibold tracking-wider text-white uppercase&quot;>INDUS FOOTWEAR</span><div class=&quot;w-16 h-[1px] bg-brand-gold mx-auto mt-4&quot;></div></div>';">
+                        <img src="./indus-logo (1).png" alt="Indus Footwear Logo" class="w-full max-w-xs sm:max-w-sm object-contain filter invert contrast-[1.2] mix-blend-lighten opacity-70 group-hover:opacity-100 transition-opacity duration-500" onerror="this.onerror=null; this.outerHTML='<div class=&quot;text-center&quot;><span class=&quot;font-sans text-2xl font-semibold tracking-wider text-white uppercase&quot;>INDUS FOOTWEAR</span><div class=&quot;w-16 h-[1px] bg-brand-gold mx-auto mt-4&quot;></div></div>';">
                     </div>
                     
                     <div>
@@ -478,29 +486,45 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-[#050505] pt-16 pb-8 border-t border-brand-border mt-auto">
+    <footer class="bg-[#050505] pt-16 pb-12 border-t border-brand-border mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
-                <div class="text-center md:text-left">
+            
+            <!-- Top Section (Logo, Center Text, Social Icons) aligned in a grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-10 mb-10">
+                
+                <!-- Logo (Left) -->
+                <div class="flex justify-center lg:justify-start">
                     <div class="inline-flex flex-col items-center justify-center group">
-                        <img src="./House Of “Indus” (1).png" alt="IVANTA Logo" class="h-32 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
+                        <img src="./House Of “Indus” (1).png" alt="IVANTA Logo" class="h-24 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
                     </div>
                 </div>
                 
-                <div class="flex gap-6">
-                    <a href="https://instagram.com/ivanta.co" target="_blank" rel="noopener noreferrer" class="text-zinc-500 hover:text-brand-gold transition-colors">Instagram</a>
-                    <a href="https://www.facebook.com/people/Ivanta/61589058824986/" target="_blank" rel="noopener noreferrer" class="text-zinc-500 hover:text-brand-gold transition-colors">Facebook</a>
+                <!-- Centered Text Section (Center) -->
+                <div class="text-center flex flex-col items-center justify-center space-y-3">
+                    <p class="text-brand-gold font-bold text-sm tracking-[0.2em] uppercase">IVANTA</p>
+                    <p class="text-[#52525b] text-xs tracking-[0.15em] uppercase">FROM THE HOUSE OF "INDUS FOOTWEAR"</p>
+                    <p class="text-[#3f3f46] text-[11px] tracking-[0.1em] uppercase">&copy; 2026 INDUS FOOTPRINTS LIMITED. ALL RIGHTS RESERVED.</p>
+                    <p class="text-[12px] text-[#52525b] normal-case tracking-normal pt-4">Designed and maintained by IT Operations Team of <a href="https://indusfootwear.com" target="_blank" rel="noopener noreferrer" class="text-brand-gold hover:underline">Indus Footwear</a></p>
+                </div>
+                
+                <!-- Social Icons (Right) -->
+                <div class="flex justify-center lg:justify-end gap-6">
+                    <!-- Instagram Icon -->
+                    <a href="https://instagram.com/ivanta.co" target="_blank" rel="noopener noreferrer" class="text-zinc-500 hover:text-brand-gold transition-colors" aria-label="Instagram">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    </a>
+                    <!-- Facebook Icon -->
+                    <a href="https://www.facebook.com/people/Ivanta/61589058824986/" target="_blank" rel="noopener noreferrer" class="text-zinc-500 hover:text-brand-gold transition-colors" aria-label="Facebook">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+                    </a>
                 </div>
             </div>
             
-            <div class="text-center border-t border-zinc-900 pt-8 text-zinc-700 text-xs tracking-wider uppercase space-y-3">
-                <p class="text-brand-gold"><b>Ivanta</b></p> <p>From The House Of "Indus Footwear"</p>
-                <p>&copy; 2026 Indus footprints limited. All rights reserved.</p>
-                <p class="text-[10px] text-zinc-600 normal-case tracking-normal">Designed and maintained by IT Operations Team of <a href="https://indusfootwear.com" target="_blank" rel="noopener noreferrer" class="text-brand-gold hover:underline">Indus Footwear</a></p>
-            </div>
+            <!-- Dividing Line Below All -->
+            <div class="w-full h-px bg-zinc-900"></div>
+            
         </div>
     </footer>
-
 
     <script>
         // --- PRELOADER EXIT SEQUENCE START ---
@@ -566,26 +590,79 @@
             e.target.reset();
         }
 
-        // Interactive Zoom Pan Logic
-        window.zoomPanImage = function(e) {
-            const container = e.currentTarget;
-            const img = container.querySelector('.product-zoom-img');
-            const { left, top, width, height } = container.getBoundingClientRect();
-            
-            // Calculate mouse position percentage
-            const x = ((e.clientX - left) / width) * 100;
-            const y = ((e.clientY - top) / height) * 100;
-            
-            // Adjust the transform origin to pan around the image smoothly
-            img.style.transformOrigin = `${x}% ${y}%`;
+        // --- ZOOM LOGIC START ---
+        let pdZoomLevel = 1;
+        let pdTranslateX = 0;
+        let pdTranslateY = 0;
+        let isZoomDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+
+        window.changeZoom = function(delta) {
+            pdZoomLevel += delta;
+            if (pdZoomLevel < 1) {
+                pdZoomLevel = 1;
+                pdTranslateX = 0;
+                pdTranslateY = 0;
+            }
+            if (pdZoomLevel > 4) pdZoomLevel = 4;
+            updateZoomTransform();
         }
+
+        function updateZoomTransform() {
+            const img = document.getElementById('pd-main-img');
+            if(img) img.style.transform = `translate(${pdTranslateX}px, ${pdTranslateY}px) scale(${pdZoomLevel})`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderShopGrid();
+
+            const zoomContainer = document.getElementById('pd-zoom-container');
+            if(zoomContainer) {
+                // Mouse events for panning
+                zoomContainer.addEventListener('mousedown', (e) => {
+                    if(pdZoomLevel > 1) {
+                        isZoomDragging = true;
+                        dragStartX = e.clientX - pdTranslateX;
+                        dragStartY = e.clientY - pdTranslateY;
+                    }
+                });
+                window.addEventListener('mouseup', () => isZoomDragging = false);
+                window.addEventListener('mousemove', (e) => {
+                    if(isZoomDragging && pdZoomLevel > 1) {
+                        pdTranslateX = e.clientX - dragStartX;
+                        pdTranslateY = e.clientY - dragStartY;
+                        updateZoomTransform();
+                    }
+                });
+
+                // Touch events for panning on mobile
+                zoomContainer.addEventListener('touchstart', (e) => {
+                    if(pdZoomLevel > 1 && e.touches.length === 1) {
+                        isZoomDragging = true;
+                        dragStartX = e.touches[0].clientX - pdTranslateX;
+                        dragStartY = e.touches[0].clientY - pdTranslateY;
+                    }
+                }, {passive: false});
+                window.addEventListener('touchend', () => isZoomDragging = false);
+                window.addEventListener('touchmove', (e) => {
+                    if(isZoomDragging && pdZoomLevel > 1 && e.touches.length === 1) {
+                        e.preventDefault(); // prevent scroll while panning
+                        pdTranslateX = e.touches[0].clientX - dragStartX;
+                        pdTranslateY = e.touches[0].clientY - dragStartY;
+                        updateZoomTransform();
+                    }
+                }, {passive: false});
+            }
+        });
+        // --- ZOOM LOGIC END ---
 
         // Generic Angles array for the mock gallery to demonstrate different angles
         const genericLoaferAngles = [
-            'https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80', // Side/Main
-            'https://images.unsplash.com/photo-1614252209825-9c944f332aa6?auto=format&fit=crop&w=800&q=80', // Top/Front
-            'https://images.unsplash.com/photo-1533827432537-70133748f5c8?auto=format&fit=crop&w=800&q=80', // Detail/Texture
-            'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80'  // Lifestyle/On Foot
+            './side black loafer.png', // Side/Main
+            './top black loafer.png', // Top/Front
+            './front black loafer.png', // Detail/Texture
+            './model shoot black loafer.png'  // Lifestyle/On Foot
         ];
 
         const genericBootAngles = [
@@ -677,9 +754,9 @@
             
             grid.innerHTML = productsDB.map(p => `
                 <div class="group bg-brand-surface rounded-sm border border-brand-border overflow-hidden transition-all duration-300 hover:border-brand-gold/50 flex flex-col cursor-pointer" onclick="openProduct('${p.id}')">
-                    <div class="aspect-[4/5] overflow-hidden img-zoom-hover relative bg-zinc-900 border-b border-brand-border">
-                        <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80'">
-                        <div class="absolute top-4 left-4 bg-brand-dark/90 backdrop-blur border border-zinc-700 text-white text-[10px] px-3 py-1.5 uppercase tracking-widest">${p.category}</div>
+                    <div class="aspect-[4/5] overflow-hidden img-zoom-hover relative bg-white border-b border-brand-border rounded-t-sm">
+                        <img src="${p.image}" alt="${p.title}" class="w-full h-full object-contain p-6 mix-blend-multiply" onerror="this.src='https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80'">
+                        <div class="absolute top-4 left-4 bg-brand-dark/90 backdrop-blur border border-zinc-700 text-white text-[10px] px-3 py-1.5 uppercase tracking-widest shadow-lg">${p.category}</div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
                         <h3 class="font-serif text-xl font-semibold text-white mb-2 leading-tight group-hover:text-brand-gold transition-colors">${p.title}</h3>
@@ -712,9 +789,11 @@
                 btnElement.classList.add('border-brand-gold');
             }
             
-            // Reset zoom origin when swapping images
-            const img = document.getElementById('pd-main-img');
-            img.style.transformOrigin = 'center center';
+            // Reset zoom
+            pdZoomLevel = 1;
+            pdTranslateX = 0;
+            pdTranslateY = 0;
+            updateZoomTransform();
         }
 
         window.selectColor = function(colorName, btnElement, imageUrl) {
@@ -753,9 +832,16 @@
             // Ensure the main image defaults correctly
             const mainImgElement = document.getElementById('pd-main-img');
             mainImgElement.src = p.image;
-            mainImgElement.style.transformOrigin = 'center center'; // Reset pan
+            
+            // Reset zoom
+            pdZoomLevel = 1;
+            pdTranslateX = 0;
+            pdTranslateY = 0;
+            updateZoomTransform();
 
             document.getElementById('pd-category').textContent = p.category;
+            const badgeEl = document.getElementById('pd-badge');
+            if (badgeEl) badgeEl.textContent = p.category; // Set badge
             document.getElementById('pd-title').textContent = p.title;
             document.getElementById('pd-price').textContent = p.price;
             document.getElementById('pd-description').textContent = p.description;
@@ -767,8 +853,8 @@
                 const completeGallery = [p.image, ...p.gallery.filter(g => g !== p.image)];
                 
                 const galleryHtml = completeGallery.map((imgSrc, index) => `
-                    <button onclick="selectGalleryImage('${imgSrc}', this)" class="gallery-thumb flex-shrink-0 w-20 h-24 sm:w-24 sm:h-32 bg-zinc-900 border ${index === 0 ? 'border-brand-gold' : 'border-zinc-800'} hover:border-brand-gold transition-colors overflow-hidden">
-                        <img src="${imgSrc}" class="w-full h-full object-cover" alt="Angle ${index + 1}" onerror="this.src='https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=200&q=80'">
+                    <button onclick="selectGalleryImage('${imgSrc}', this)" class="gallery-thumb flex-shrink-0 w-20 h-24 sm:w-24 sm:h-32 bg-white border ${index === 0 ? 'border-brand-gold' : 'border-zinc-800'} hover:border-brand-gold transition-colors overflow-hidden rounded-sm">
+                        <img src="${imgSrc}" class="w-full h-full object-contain p-2 mix-blend-multiply" alt="Angle ${index + 1}" onerror="this.src='https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=200&q=80'">
                     </button>
                 `).join('');
                 document.getElementById('pd-gallery').innerHTML = galleryHtml;
@@ -1350,8 +1436,6 @@
                 });
             }
         }
-
-        document.addEventListener('DOMContentLoaded', renderShopGrid);
 
     </script>
 </body>
