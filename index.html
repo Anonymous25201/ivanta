@@ -168,33 +168,42 @@
 
     <header class="header fixed w-full top-0 z-40 glass-nav border-b border-brand-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-28">
-                <!-- Logo -->
-                <div class="logo">
-                    <a href="#" onclick="navigate('home')" class="flex flex-col items-center justify-center group inline-block transition-transform duration-300 hover:scale-105">
-                        <img src="./House Of “Indus” (1).png" alt="IVANTA Logo" class="h-24 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
-                    </a>
+            <div class="flex justify-between items-center h-28 relative">
+                
+                <!-- Left: Empty to balance center logo -->
+                <div class="flex-1 flex justify-start z-10"></div>
+
+                <!-- Center: Big Logo Vector -->
+                <div class="absolute left-1/2 transform -translate-x-1/2 h-full flex items-center justify-center z-0 pointer-events-none">
+                    <div class="pointer-events-auto cursor-pointer transition-transform duration-500 hover:scale-110 drop-shadow-2xl" onclick="navigate('home')">
+                        <div class="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full overflow-hidden flex items-center justify-center relative bg-transparent">
+                            <img src="./House Of “Indus” (1).png" alt="IVANTA Vector Logo" class="absolute w-[100%] max-w-none -translate-y-[10%] filter invert grayscale contrast-[2] mix-blend-screen opacity-90" onerror="this.style.display='none'">
+                        </div>
+                    </div>
                 </div>
                 
-                <!-- Desktop Nav -->
-                <nav class="hidden md:block">
-                    <ul class="flex space-x-10 text-sm font-medium tracking-widest uppercase">
-                        <li><a href="#" onclick="navigate('home')" class="nav-link active pb-1 text-zinc-400 hover:text-brand-gold transition-colors duration-300" data-target="home">Home</a></li>
-                        <li><a href="#" onclick="navigate('shop')" class="nav-link pb-1 text-zinc-400 hover:text-brand-gold transition-colors duration-300" data-target="shop">Shop</a></li>
-                        <li><a href="#" onclick="navigate('about')" class="nav-link pb-1 text-zinc-400 hover:text-brand-gold transition-colors duration-300" data-target="about">About</a></li>
-                        <li><a href="#" onclick="navigate('contact')" class="nav-link pb-1 text-zinc-400 hover:text-brand-gold transition-colors duration-300" data-target="contact">Contact</a></li>
-                    </ul>
-                </nav>
+                <!-- Right: Desktop Nav & Mobile Button -->
+                <div class="flex-1 flex justify-end z-10 items-center">
+                    <!-- Desktop Nav -->
+                    <nav class="hidden lg:block">
+                        <ul class="flex space-x-6 xl:space-x-10 text-sm font-medium tracking-widest uppercase">
+                            <li><a href="#" onclick="navigate('home')" class="nav-link active pb-1 text-zinc-400 hover:text-brand-gold transition-colors duration-300" data-target="home">Home</a></li>
+                            <li><a href="#" onclick="navigate('shop')" class="nav-link pb-1 text-zinc-400 hover:text-brand-gold transition-colors duration-300" data-target="shop">Shop</a></li>
+                            <li><a href="#" onclick="navigate('about')" class="nav-link pb-1 text-zinc-400 hover:text-brand-gold transition-colors duration-300" data-target="about">About</a></li>
+                            <li><a href="#" onclick="navigate('contact')" class="nav-link pb-1 text-zinc-400 hover:text-brand-gold transition-colors duration-300" data-target="contact">Contact</a></li>
+                        </ul>
+                    </nav>
 
-                <!-- Mobile Menu Button -->
-                <button class="md:hidden text-zinc-400 hover:text-brand-gold" onclick="toggleMobileMenu()">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
+                    <!-- Mobile Menu Button -->
+                    <button class="lg:hidden text-zinc-400 hover:text-brand-gold ml-4" onclick="toggleMobileMenu()">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Mobile Menu (Hidden by default) -->
-        <div id="mobile-menu" class="hidden md:hidden bg-brand-surface border-b border-brand-border">
+        <div id="mobile-menu" class="hidden lg:hidden bg-brand-surface border-b border-brand-border">
             <ul class="px-4 py-4 space-y-4 text-sm font-medium tracking-widest uppercase text-center mt-28">
                 <li><a href="#" onclick="navigate('home'); toggleMobileMenu()" class="block text-zinc-400 hover:text-brand-gold">Home</a></li>
                 <li><a href="#" onclick="navigate('shop'); toggleMobileMenu()" class="block text-zinc-400 hover:text-brand-gold">Shop</a></li>
@@ -229,14 +238,14 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="relative aspect-[4/3] img-zoom-hover group cursor-pointer border border-brand-border bg-white rounded-sm overflow-hidden" onclick="navigate('shop')">
-                            <img src="./IV-202 TAN.jpg" alt="Loafers" class="w-full h-full object-contain p-8 mix-blend-multiply">
+                            <img src="./IV-202 TAN.jpg" alt="Loafers" class="w-full h-full object-contain p-8 mix-blend-multiply" onerror="this.src='https://placehold.co/800x600/18181b/cda95e?text=Signature+Loafers'">
                             <div class="absolute bottom-0 left-0 right-0 p-8 flex flex-col items-center justify-end bg-gradient-to-t from-white via-white/90 to-transparent">
                                 <h3 class="font-serif text-2xl sm:text-3xl text-brand-dark mb-2 font-bold text-center">Signature Loafers</h3>
                                 <p class="text-brand-goldHover text-sm tracking-widest uppercase flex items-center gap-2 font-medium">Discover <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg></p>
                             </div>
                         </div>
                         <div class="relative aspect-[4/3] img-zoom-hover group cursor-pointer border border-brand-border bg-white rounded-sm overflow-hidden" onclick="navigate('shop')">
-                            <img src="./boot2.jpeg" alt="Heel Boots" class="w-full h-full object-contain p-8 mix-blend-multiply">
+                            <img src="./boot2.jpeg" alt="Heel Boots" class="w-full h-full object-contain p-8 mix-blend-multiply" onerror="this.src='https://placehold.co/800x600/18181b/cda95e?text=Heel+Boots'">
                             <div class="absolute bottom-0 left-0 right-0 p-8 flex flex-col items-center justify-end bg-gradient-to-t from-white via-white/90 to-transparent">
                                 <h3 class="font-serif text-2xl sm:text-3xl text-brand-dark mb-2 font-bold text-center">Architectural Heel Boots</h3>
                                 <p class="text-brand-goldHover text-sm tracking-widest uppercase flex items-center gap-2 font-medium">Discover <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg></p>
@@ -247,9 +256,7 @@
             </section>
         </div>
 
-
         <div id="view-shop" class="page-view py-12">
-            
             <div class="text-center py-12 mb-8 bg-brand-surface border-b border-brand-border">
                 <p class="text-brand-gold font-medium tracking-[0.2em] uppercase text-xs mb-3">House of Indus</p>
                 <h2 class="font-serif text-4xl sm:text-5xl font-bold text-white">The Explore Series</h2>
@@ -257,7 +264,6 @@
             </div>
 
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
-                <!-- Grid -->
                 <div id="shop-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
                     <!-- Products will be injected here via JavaScript -->
                 </div>
@@ -290,7 +296,8 @@
                                 </button>
                             </div>
     
-                            <img id="pd-main-img" src="" alt="Product" class="zoom-image w-full h-full object-contain p-8 mix-blend-multiply" onerror="this.src='https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80'">
+                            <!-- Fixed Fallback Placeholder -->
+                            <img id="pd-main-img" src="" alt="Product" class="zoom-image w-full h-full object-contain p-8 mix-blend-multiply" onerror="this.src='https://placehold.co/800x1000/18181b/cda95e?text=Product+Image'">
                         </div>
 
                         <!-- Thumbnail Strip -->
@@ -492,19 +499,23 @@
             <!-- Top Section (Logo, Center Text, Social Icons) aligned in a grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-10 mb-10">
                 
-                <!-- Logo (Left) -->
+                <!-- Logo Vector (Left) -->
                 <div class="flex justify-center lg:justify-start">
-                    <div class="inline-flex flex-col items-center justify-center group">
-                        <img src="./House Of “Indus” (1).png" alt="IVANTA Logo" class="h-24 w-auto object-contain filter invert contrast-[1.2] mix-blend-lighten" onerror="this.onerror=null; this.outerHTML='<span class=&quot;font-logo text-3xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]&quot;>IVANTA</span><div class=&quot;w-full h-[1px] bg-zinc-400 mt-1.5 mb-1&quot;></div><span class=&quot;font-sans text-[0.65rem] font-semibold tracking-wider text-white&quot;>House Of &quot;Indus&quot;</span>';">
+                    <div class="inline-flex flex-col items-center justify-center group opacity-80 hover:opacity-100 transition-opacity duration-300">
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex items-center justify-center relative bg-transparent">
+                            <img src="./House Of “Indus”.jpg" alt="IVANTA Vector Logo" class="absolute w-[180%] max-w-none -translate-y-[10%] filter invert grayscale contrast-[2] mix-blend-screen" onerror="this.style.display='none'">
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Centered Text Section (Center) -->
-                <div class="text-center flex flex-col items-center justify-center space-y-3">
-                    <p class="text-brand-gold font-bold text-sm tracking-[0.2em] uppercase">IVANTA</p>
-                    <p class="text-[#52525b] text-xs tracking-[0.15em] uppercase">FROM THE HOUSE OF "INDUS FOOTWEAR"</p>
-                    <p class="text-[#3f3f46] text-[11px] tracking-[0.1em] uppercase">&copy; 2026 INDUS FOOTPRINTS LIMITED. ALL RIGHTS RESERVED.</p>
-                    <p class="text-[12px] text-[#52525b] normal-case tracking-normal pt-4">Designed and maintained by IT Operations Team of <a href="https://indusfootwear.com" target="_blank" rel="noopener noreferrer" class="text-brand-gold hover:underline">Indus Footwear</a></p>
+                <!-- Centered Text Section (Preloader Style) -->
+                <div class="text-center flex flex-col items-center justify-center">
+                    <h2 class="font-logo text-3xl sm:text-4xl font-light tracking-[0.35em] text-white leading-none pl-[0.35em]">IVANTA</h2>
+                    <div class="w-24 sm:w-32 h-[1px] bg-brand-gold mt-5 mb-4"></div>
+                    <span class="font-sans text-[0.65rem] sm:text-xs font-semibold tracking-[0.35em] text-zinc-400 uppercase mb-8">House Of "Indus"</span>
+                    
+                    <p class="text-[#3f3f46] text-[10px] sm:text-[11px] tracking-[0.1em] uppercase">&copy; 2026 INDUS FOOTPRINTS LIMITED. ALL RIGHTS RESERVED.</p>
+                    <p class="text-[11px] sm:text-[12px] text-[#52525b] normal-case tracking-normal pt-2">Designed and maintained by IT Operations Team of <a href="https://indusfootwear.com" target="_blank" rel="noopener noreferrer" class="text-brand-gold hover:underline">Indus Footwear</a></p>
                 </div>
                 
                 <!-- Social Icons (Right) -->
@@ -665,6 +676,18 @@
             './model shoot black loafer.png'  // Lifestyle/On Foot
         ];
 
+        const brownLoaferAngles = [
+            'https://images.unsplash.com/photo-1614252209825-9c944f332aa6?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1533827432537-70133748f5c8?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80'
+        ];
+
+        const tanLoaferAngles = [
+            'https://images.unsplash.com/photo-1533827432537-70133748f5c8?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80'
+        ];
+
         const genericBootAngles = [
             'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80', // Side/Main
             'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80', // Angle
@@ -682,8 +705,8 @@
                 image: './IV-103 BLACK.jpg', 
                 gallery: genericLoaferAngles,
                 colors: [
-                    { name: 'Obsidian Black', hex: '#000000', image: './IV-103 BLACK.jpg' },
-                    { name: 'Midnight Blue', hex: '#191970', image: './IV-103 BROWN.jpg' }
+                    { name: 'Obsidian Black', hex: '#000000', image: './IV-103 BLACK.jpg', gallery: genericLoaferAngles },
+                    { name: 'Midnight Brown', hex: '#191970', image: './IV-103 BROWN.jpg', gallery: brownLoaferAngles }
                 ]
             },
             {
@@ -693,11 +716,11 @@
                 category: 'Loafers',
                 description: 'Burnished leather finish offers a deep, rich patina that develops character with every step you take. Expertly stitched for durability and comfort.',
                 image: 'IV-103 BROWN.jpg',
-                gallery: genericLoaferAngles,
+                gallery: brownLoaferAngles,
                 colors: [
-                    { name: 'Cognac Brown', hex: '#5C4033', image: './IV-103 BROWN.jpg' },
-                    { name: 'Mahogany', hex: '#4A0404', image: './IV-202 TAN.jpg' },
-                    { name: 'Desert Tan', hex: '#D2B48C', image: 'iv101black.jpg' }
+                    { name: 'Cognac Brown', hex: '#5C4033', image: './IV-103 BROWN.jpg', gallery: brownLoaferAngles },
+                    { name: 'Mahogany', hex: '#4A0404', image: './IV-202 TAN.jpg', gallery: brownLoaferAngles },
+                    { name: 'Desert Tan', hex: '#D2B48C', image: 'iv101black.jpg', gallery: tanLoaferAngles }
                 ]
             },
             {
@@ -707,10 +730,10 @@
                 category: 'Loafers',
                 description: 'A lighter, versatile shade perfect for summer suiting and elevated weekend casual wear. Constructed with a flexible sole for all-day comfort.',
                 image: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8?auto=format&fit=crop&w=800&q=80',
-                gallery: genericLoaferAngles,
+                gallery: tanLoaferAngles,
                 colors: [
-                    { name: 'Desert Tan', hex: '#D2B48C', image: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8?auto=format&fit=crop&w=800&q=80' },
-                    { name: 'Cognac Brown', hex: '#5C4033', image: 'https://images.unsplash.com/photo-1614252209825-9c944f332aa6?auto=format&fit=crop&w=800&q=80' }
+                    { name: 'Desert Tan', hex: '#D2B48C', image: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8?auto=format&fit=crop&w=800&q=80', gallery: tanLoaferAngles },
+                    { name: 'Cognac Brown', hex: '#5C4033', image: 'https://images.unsplash.com/photo-1614252209825-9c944f332aa6?auto=format&fit=crop&w=800&q=80', gallery: brownLoaferAngles }
                 ]
             },
             {
@@ -722,8 +745,11 @@
                 image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80',
                 gallery: genericBootAngles,
                 colors: [
-                    { name: 'Midnight Black', hex: '#000000', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80' },
-                    { name: 'Dark Chestnut', hex: '#3B2F2F', image: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80' }
+                    { name: 'Midnight Black', hex: '#000000', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80', gallery: genericBootAngles },
+                    { name: 'Dark Chestnut', hex: '#3B2F2F', image: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80', gallery: [
+                        'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80',
+                        'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&w=800&q=80'
+                    ]}
                 ]
             },
             {
@@ -735,9 +761,12 @@
                 image: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80',
                 gallery: genericBootAngles,
                 colors: [
-                    { name: 'Chestnut Suede', hex: '#8B5A2B', image: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80' },
-                    { name: 'Charcoal Suede', hex: '#36454F', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80' },
-                    { name: 'Tan Suede', hex: '#D2B48C', image: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8?auto=format&fit=crop&w=800&q=80' }
+                    { name: 'Chestnut Suede', hex: '#8B5A2B', image: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80', gallery: genericBootAngles },
+                    { name: 'Charcoal Suede', hex: '#36454F', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80', gallery: [
+                        'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80',
+                        'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=800&q=80'
+                    ]},
+                    { name: 'Tan Suede', hex: '#D2B48C', image: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8?auto=format&fit=crop&w=800&q=80', gallery: tanLoaferAngles }
                 ]
             }
         ];
@@ -755,7 +784,7 @@
             grid.innerHTML = productsDB.map(p => `
                 <div class="group bg-brand-surface rounded-sm border border-brand-border overflow-hidden transition-all duration-300 hover:border-brand-gold/50 flex flex-col cursor-pointer" onclick="openProduct('${p.id}')">
                     <div class="aspect-[4/5] overflow-hidden img-zoom-hover relative bg-white border-b border-brand-border rounded-t-sm">
-                        <img src="${p.image}" alt="${p.title}" class="w-full h-full object-contain p-6 mix-blend-multiply" onerror="this.src='https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=800&q=80'">
+                        <img src="${p.image}" alt="${p.title}" class="w-full h-full object-contain p-6 mix-blend-multiply" onerror="this.src='https://placehold.co/800x1000/18181b/cda95e?text=IVANTA'">
                         <div class="absolute top-4 left-4 bg-brand-dark/90 backdrop-blur border border-zinc-700 text-white text-[10px] px-3 py-1.5 uppercase tracking-widest shadow-lg">${p.category}</div>
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
@@ -801,8 +830,35 @@
             document.getElementById('pd-color-name').textContent = colorName;
             
             if (imageUrl) {
-                // When color changes, set it as the main image
-                selectGalleryImage(imageUrl, null); // passing null resets all thumbnail borders
+                const colorObj = currentProduct.colors.find(c => c.name === colorName);
+                
+                // Update Main Image
+                document.getElementById('pd-main-img').src = imageUrl;
+                
+                // Reset zoom
+                pdZoomLevel = 1;
+                pdTranslateX = 0;
+                pdTranslateY = 0;
+                updateZoomTransform();
+
+                // Re-render Gallery specifically for this color
+                let completeGallery = [];
+                if (colorObj && colorObj.gallery && colorObj.gallery.length > 0) {
+                    completeGallery = [imageUrl, ...colorObj.gallery.filter(g => g !== imageUrl)];
+                } else if (currentProduct.gallery && currentProduct.gallery.length > 0) {
+                    // Fallback: Use generic gallery but swap the first image with the selected color's image
+                    const genericAngles = currentProduct.gallery.filter(g => g !== currentProduct.image && g !== imageUrl);
+                    completeGallery = [imageUrl, ...genericAngles];
+                } else {
+                    completeGallery = [imageUrl];
+                }
+                
+                const galleryHtml = completeGallery.map((imgSrc, index) => `
+                    <button onclick="selectGalleryImage('${imgSrc}', this)" class="gallery-thumb flex-shrink-0 w-20 h-24 sm:w-24 sm:h-32 bg-white border ${index === 0 ? 'border-brand-gold' : 'border-zinc-800'} hover:border-brand-gold transition-colors overflow-hidden rounded-sm">
+                        <img src="${imgSrc}" class="w-full h-full object-contain p-2 mix-blend-multiply" alt="Angle ${index + 1}" onerror="this.src='https://placehold.co/200x250/18181b/cda95e?text=Angle+${index + 1}'">
+                    </button>
+                `).join('');
+                document.getElementById('pd-gallery').innerHTML = galleryHtml;
             }
             
             document.querySelectorAll('.color-btn').forEach(b => {
@@ -854,7 +910,7 @@
                 
                 const galleryHtml = completeGallery.map((imgSrc, index) => `
                     <button onclick="selectGalleryImage('${imgSrc}', this)" class="gallery-thumb flex-shrink-0 w-20 h-24 sm:w-24 sm:h-32 bg-white border ${index === 0 ? 'border-brand-gold' : 'border-zinc-800'} hover:border-brand-gold transition-colors overflow-hidden rounded-sm">
-                        <img src="${imgSrc}" class="w-full h-full object-contain p-2 mix-blend-multiply" alt="Angle ${index + 1}" onerror="this.src='https://images.unsplash.com/photo-1614252339460-e1b18001d935?auto=format&fit=crop&w=200&q=80'">
+                        <img src="${imgSrc}" class="w-full h-full object-contain p-2 mix-blend-multiply" alt="Angle ${index + 1}" onerror="this.src='https://placehold.co/200x250/18181b/cda95e?text=IVANTA'">
                     </button>
                 `).join('');
                 document.getElementById('pd-gallery').innerHTML = galleryHtml;
@@ -900,7 +956,7 @@
         // --- NEW B2B RETAILER TOOLS LOGIC --- //
 
         // Helper function for fetching image as base64 securely, with optional smooth background removal/inversion
-        function getBase64FromUrl(url, makeTransparent = false, invertWhite = false) {
+        function getBase64FromUrl(url, makeTransparent = false, invertWhite = false, cropTopHalf = false) {
             return new Promise((resolve) => {
                 const img = new Image();
                 img.crossOrigin = "Anonymous";
@@ -908,7 +964,8 @@
                     try {
                         const canvas = document.createElement('canvas');
                         canvas.width = img.naturalWidth;
-                        canvas.height = img.naturalHeight;
+                        // Dynamically crop out the bottom text by only taking the top 65% of the canvas height
+                        canvas.height = cropTopHalf ? img.naturalHeight * 0.65 : img.naturalHeight;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0);
                         
@@ -977,17 +1034,25 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            // Fetch Main Image + All Color Images concurrently
-            const mainImgSrc = document.getElementById('pd-main-img').src;
+            // Fix: We explicitly lock in the primary image or selected color image 
+            // rather than whatever random thumbnail angle happens to be on screen.
+            let catImgSrc = currentProduct.image;
+            if (selectedColor) {
+                const cObj = currentProduct.colors.find(c => c.name === selectedColor);
+                if (cObj && cObj.image) {
+                    catImgSrc = cObj.image;
+                }
+            }
+
             const colorPromises = currentProduct.colors.map(async (c) => {
                 const imgData = await getBase64FromUrl(c.image);
                 return { name: c.name, imgData: imgData };
             });
 
-            // Added Logo to the concurrent fetch (Requesting transparent background and inverted white text)
+            // Added Logo to the concurrent fetch (Requesting transparent background and inverted white text, plus cropping)
             const [mainImgData, logoData, ...colorImages] = await Promise.all([
-                getBase64FromUrl(mainImgSrc),
-                getBase64FromUrl('./House Of “Indus” (1).png', true, true),
+                getBase64FromUrl(catImgSrc),
+                getBase64FromUrl('./House Of “Indus”.jpg', true, true, true),
                 ...colorPromises
             ]);
 
@@ -1020,9 +1085,8 @@
             doc.text(`CATEGORY: ${currentProduct.category.toUpperCase()}`, 20, 75);
             
             doc.setTextColor(181, 147, 78); // darker gold for print contrast
-            // jsPDF default fonts don't support the ₹ symbol, so we convert it to Rs. to prevent layout issues
-            const pdfPrice = currentProduct.price.replace('₹', 'Rs. ');
-            doc.text(`MSRP: ${pdfPrice}`, 20, 85);
+            // Replace actual price with fixed Rs. 599 for B2B generation
+            doc.text(`Rs. 599`, 20, 85);
 
             let yPos = 100;
             
@@ -1113,7 +1177,7 @@
             // Footer
             doc.setFontSize(9);
             doc.setTextColor(150, 150, 150);
-            doc.text("For wholesale inquiries, contact: concierge@ivanta.com", 105, 280, { align: "center" });
+            doc.text("For wholesale inquiries, contact: ivanta@indusfootwear.com", 105, 280, { align: "center" });
 
             return doc;
         }
@@ -1126,9 +1190,26 @@
             try {
                 const doc = await generatePDFDoc();
                 const blob = doc.output('blob');
-                const url = URL.createObjectURL(blob);
                 const fileName = `IVANTA-${currentProduct.title.replace(/\s+/g, '-').toUpperCase()}-CATALOGUE.pdf`;
                 
+                // Attempt to share the generated file directly (Mobile priority)
+                const file = new File([blob], fileName, { type: 'application/pdf' });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: `IVANTA Catalogue - ${currentProduct.title}`,
+                            text: `B2B Catalogue for ${currentProduct.title}`
+                        });
+                        showToast("Catalogue shared successfully!");
+                        return; // Exit if shared, don't download twice
+                    } catch (err) {
+                        if (err.name === 'AbortError') return; // User closed share sheet intentionally
+                        console.log("Share failed (e.g., gesture timeout), falling back to normal download", err);
+                    }
+                }
+
+                const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
                 link.download = fileName;
@@ -1212,10 +1293,16 @@
                 }
             };
 
-            const imgSrc = document.getElementById('pd-main-img').src;
+            // Fix: Target the specific colored image or primary image, ignoring gallery selection
+            let catImgSrc = currentProduct.image;
+            const cObj = currentProduct.colors.find(c => c.name === selectedColor);
+            if (cObj && cObj.image) {
+                catImgSrc = cObj.image;
+            }
+
             const [img, logoImg] = await Promise.all([
-                loadImgSafe(imgSrc),
-                loadImgSafe('./House Of “Indus” (1).png')
+                loadImgSafe(catImgSrc),
+                loadImgSafe('./House Of “Indus”.jpg')
             ]);
 
             // Fill dark background
@@ -1295,18 +1382,17 @@
                 ctx.textAlign = 'left';
             }
 
-            // Draw Top Brand Badge (Huge and Native Clarity)
+            // Draw Top Brand Badge (Huge and Native Clarity - Cropped Vector)
             if (logoImg) {
                 ctx.save();
-                const logoH = 260; // Much bigger size
-                const logoRatio = logoImg.width / logoImg.height;
+                const cropH = logoImg.height * 0.65; // Top 65% isolates the vector
+                const logoH = 180; // Scaled height for canvas
+                const logoRatio = logoImg.width / cropH;
                 const logoW = logoH * logoRatio;
-                const logoX = (canvas.width - logoW) / 2; // Center horizontally
+                const logoX = (canvas.width - logoW) / 2;
                 
-                // Use native canvas filters for crystal clear anti-aliasing
-                // invert(1) makes the black logo white, brightness boosts the visual pop
                 ctx.filter = 'invert(1) brightness(2)'; 
-                ctx.drawImage(logoImg, logoX, 40, logoW, logoH); 
+                ctx.drawImage(logoImg, 0, 0, logoImg.width, cropH, logoX, 60, logoW, logoH); 
                 ctx.restore();
             }
             
@@ -1318,7 +1404,8 @@
             
             ctx.fillStyle = '#cda95e'; 
             ctx.font = '500 42px "Inter", sans-serif';
-            ctx.fillText(`${currentProduct.category.toUpperCase()}  |  ${currentProduct.price}`, imgX, 1470);
+            // Replace actual price with fixed Rs. 599 for B2B generation
+            ctx.fillText(`${currentProduct.category.toUpperCase()}  |  Rs. 599`, imgX, 1470);
             
             ctx.fillStyle = 'rgba(24, 24, 27, 0.9)'; 
             ctx.strokeStyle = '#cda95e'; 
@@ -1346,8 +1433,27 @@
 
             // Use toBlob for stable mobile sharing and downloading
             try {
-                canvas.toBlob((blob) => {
+                canvas.toBlob(async (blob) => {
                     if(!blob) throw new Error("Blob Generation Failed");
+                    const fileName = `IVANTA-${currentProduct.title.replace(/\s+/g, '-').toUpperCase()}-${selectedColor.replace(/\s+/g, '-')}-SZ${selectedSize}.jpg`;
+                    
+                    // Attempt to share the generated file directly (Mobile priority)
+                    const file = new File([blob], fileName, { type: 'image/jpeg' });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: `IVANTA Spec - ${currentProduct.title}`,
+                                text: `Specification Image for ${currentProduct.title}`
+                            });
+                            showToast("Spec image shared successfully!");
+                            return; // Exit if shared, don't download twice
+                        } catch (err) {
+                            if (err.name === 'AbortError') return; // User closed share sheet intentionally
+                            console.log("Share failed (e.g., gesture timeout), falling back to normal download", err);
+                        }
+                    }
+
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = url;
