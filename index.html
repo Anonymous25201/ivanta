@@ -535,6 +535,50 @@
     </footer>
 
     <script>
+        // 1. Disable Right-Click (Context Menu)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // 2. Disable Keyboard Shortcuts (Ctrl+U, F12, Ctrl+Shift+I, etc.)
+        document.addEventListener('keydown', function(e) {
+            // Block F12 (DevTools)
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Block Ctrl+U (View Source) and Ctrl+S (Save Page)
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Block Ctrl+Shift+I (Inspect), Ctrl+Shift+J (Console), Ctrl+Shift+C (Element Select)
+            if (e.ctrlKey && e.shiftKey && (e.key === 'i' || e.key === 'I' || e.key === 'j' || e.key === 'J' || e.key === 'c' || e.key === 'C')) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Block Mac equivalents (Cmd+Option+I, Cmd+Option+J, Cmd+U)
+            if (e.metaKey && e.altKey && (e.key === 'i' || e.key === 'I' || e.key === 'j' || e.key === 'J')) {
+                e.preventDefault();
+                return false;
+            }
+            if (e.metaKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // 3. Prevent Dragging Images to Desktop
+        document.addEventListener('dragstart', function(e) {
+            if (e.target.nodeName === 'IMG') {
+                e.preventDefault();
+            }
+        });
+
+        
         // --- PRELOADER EXIT SEQUENCE START ---
         // Run the timer immediately to ensure it never gets stuck waiting on large images
         setTimeout(() => {
